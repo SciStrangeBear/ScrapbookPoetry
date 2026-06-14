@@ -438,16 +438,16 @@ input, textarea { font-family: 'Courier Prime', 'PingFang SC', monospace; }
 }
 .btn-help {
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
-  border: 1px solid var(--outline-variant);
+  border: none;
+  background: transparent;
   color: var(--outline);
   transition: all 0.2s;
 }
 .btn-help:hover {
-  border-color: var(--secondary);
   color: var(--secondary);
-  background: var(--secondary-container);
+  background: transparent;
 }
 
 /* ===== Buttons ===== */
@@ -811,44 +811,136 @@ input, textarea { font-family: 'Courier Prime', 'PingFang SC', monospace; }
   padding-right: 8px;
 }
 .source-text-item {
-  background: var(--surface-low);
-  border: 1px solid rgba(202,198,189,0.3);
-  padding: 20px;
-  margin-bottom: 12px;
-  box-shadow: 0px 4px 12px var(--shadow-warm);
+  background: linear-gradient(180deg, rgba(255,252,246,0.97) 0%, rgba(244,238,227,0.96) 100%);
+  border: 1px solid rgba(182,171,149,0.42);
+  padding: 24px 24px 22px;
+  margin: 8px 8px 18px 2px;
+  box-shadow:
+    0 16px 26px rgba(89, 77, 58, 0.08),
+    0 5px 10px rgba(89, 77, 58, 0.07),
+    0 1px 0 rgba(255,255,255,0.55) inset,
+    0 -1px 0 rgba(170,150,120,0.08) inset;
   position: relative;
+  overflow: hidden;
+  transform: rotate(var(--paper-rot, 0deg));
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
 }
-.source-text-item:nth-child(odd) { background: #fdfaf3; }
-.source-text-item:nth-child(even) { background: #f8f3e9; }
+.source-text-item:hover {
+  transform: translateY(-2px) rotate(var(--paper-rot, 0deg));
+  box-shadow:
+    0 20px 30px rgba(89, 77, 58, 0.1),
+    0 7px 14px rgba(89, 77, 58, 0.08),
+    0 1px 0 rgba(255,255,255,0.55) inset,
+    0 -1px 0 rgba(170,150,120,0.08) inset;
+}
 .source-text-item::before {
   content: '';
   position: absolute;
-  top: -4px; left: 20%; width: 30px; height: 8px;
-  background: rgba(246,243,235,0.4);
-  transform: rotate(-2deg);
+  top: -6px;
+  left: 16%;
+  width: 54px;
+  height: 14px;
+  background: linear-gradient(180deg, rgba(247,242,230,0.85) 0%, rgba(232,223,204,0.45) 100%);
+  box-shadow: inset 0 0 5px rgba(98, 86, 69, 0.08);
+  transform: rotate(-3deg);
   pointer-events: none;
+  opacity: 0.95;
+}
+.source-text-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 14% 16%, rgba(255,255,255,0.5) 0 16px, transparent 22px),
+    radial-gradient(circle at 84% 82%, rgba(147, 118, 82, 0.08) 0 24px, transparent 32px),
+    repeating-linear-gradient(0deg, rgba(120,101,72,0.02) 0 1px, transparent 1px 26px),
+    repeating-linear-gradient(90deg, rgba(120,101,72,0.018) 0 1px, transparent 1px 30px);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  opacity: 0.75;
+}
+.source-text-item:nth-child(3n + 1) {
+  --paper-rot: -0.45deg;
+}
+.source-text-item:nth-child(3n + 2) {
+  --paper-rot: 0.35deg;
+}
+.source-text-item:nth-child(3n + 3) {
+  --paper-rot: -0.15deg;
+}
+.source-text-item[data-paper="newsprint"] {
+  background: linear-gradient(180deg, #f4ead2 0%, #eadfc4 100%);
+}
+.source-text-item[data-paper="magazine"] {
+  background: linear-gradient(180deg, #fdfaf3 0%, #f5eee0 100%);
+}
+.source-text-item[data-paper="letter"] {
+  background: linear-gradient(180deg, #fbf5ec 0%, #f4ebdf 100%);
+}
+.source-text-item[data-paper="notebook"] {
+  background: linear-gradient(180deg, #f7f1e4 0%, #efe6d6 100%);
+}
+.source-text-item[data-paper="aged"] {
+  background: linear-gradient(180deg, #efe6d6 0%, #e6dac6 100%);
+}
+.source-text-item[data-paper="newsprint"]::after {
+  background:
+    radial-gradient(circle at 14% 16%, rgba(255,255,255,0.4) 0 16px, transparent 22px),
+    repeating-linear-gradient(90deg, transparent 0 34px, rgba(148,124,88,0.055) 34px 35px),
+    repeating-linear-gradient(0deg, rgba(120,101,72,0.02) 0 1px, transparent 1px 24px);
+}
+.source-text-item[data-paper="letter"]::after {
+  background:
+    linear-gradient(90deg, rgba(186, 103, 91, 0.12) 0 2px, transparent 2px),
+    repeating-linear-gradient(0deg, transparent 0 31px, rgba(118, 144, 190, 0.085) 31px 32px),
+    radial-gradient(circle at 84% 82%, rgba(147, 118, 82, 0.08) 0 22px, transparent 30px);
+}
+.source-text-item[data-paper="notebook"]::after {
+  background:
+    linear-gradient(90deg, rgba(176, 104, 84, 0.14) 0 3px, transparent 3px),
+    repeating-linear-gradient(0deg, transparent 0 27px, rgba(132, 152, 185, 0.07) 27px 28px),
+    radial-gradient(circle at 18% 20%, rgba(255,255,255,0.38) 0 20px, transparent 26px);
+}
+.source-text-item[data-paper="aged"]::after {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255,255,255,0.22) 0 16px, transparent 26px),
+    radial-gradient(circle at 82% 74%, rgba(139, 104, 62, 0.12) 0 26px, transparent 34px),
+    repeating-linear-gradient(0deg, rgba(120,101,72,0.025) 0 1px, transparent 1px 25px);
 }
 .source-text-item .sti-header {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 12px;
-  margin-bottom: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(136, 117, 90, 0.14);
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.03em;
-  color: var(--on-surface-variant);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: #6d665d;
+  position: relative;
+  z-index: 1;
 }
 .source-text-item .sti-title {
   font-family: var(--font-display);
-  font-size: 15px;
+  font-size: 16px;
   color: #1a1918;
+  background: rgba(250, 246, 238, 0.78);
+  border: 1px solid rgba(184, 172, 151, 0.28);
+  padding: 4px 10px 3px;
+  box-shadow: 0 2px 4px rgba(93, 79, 59, 0.05);
 }
 .source-text-item .sti-content {
   font-family: var(--font-body);
   font-size: 15px;
-  line-height: 2;
+  line-height: 2.08;
   user-select: text;
   -webkit-user-select: text;
+  position: relative;
+  z-index: 1;
+  color: #2a2722;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.25);
 }
 .source-text-item .sti-content .highlight-cut {
   background: #ece3d0;
@@ -856,6 +948,45 @@ input, textarea { font-family: 'Courier Prime', 'PingFang SC', monospace; }
   position: relative;
   border-bottom: 2px solid #b8a68b;
   border-radius: 2px;
+}
+.source-text-item .sti-fold-mark {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 31%;
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(154, 136, 105, 0.09) 16%,
+    rgba(154, 136, 105, 0.16) 50%,
+    rgba(154, 136, 105, 0.08) 84%,
+    transparent 100%
+  );
+  opacity: 0.7;
+  pointer-events: none;
+}
+.source-text-item .sti-ink-stamp {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(123, 84, 85, 0.38);
+  color: rgba(123, 84, 85, 0.34);
+  transform: rotate(12deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  pointer-events: none;
+  z-index: 1;
+}
+.source-text-item .sti-ink-stamp::after {
+  content: '剪读';
 }
 
 /* Collection Panel */
@@ -1175,9 +1306,9 @@ input, textarea { font-family: 'Courier Prime', 'PingFang SC', monospace; }
 .canvas-toolbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   margin-bottom: 10px;
-  gap: 10px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 .poem-tabs {
@@ -1185,6 +1316,7 @@ input, textarea { font-family: 'Courier Prime', 'PingFang SC', monospace; }
   gap: 6px;
   flex: 1;
   overflow-x: auto;
+  min-width: 0;
 }
 .poem-tab {
   padding: 6px 16px;
@@ -1201,6 +1333,12 @@ input, textarea { font-family: 'Courier Prime', 'PingFang SC', monospace; }
   color: white;
 }
 .poem-tab:hover:not(.active) { background: var(--surface-container); color: var(--on-surface-variant); }
+.toolbar-author {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
 .canvas-actions { display: flex; gap: 6px; flex-shrink: 0; }
 
 /* Canvas */
@@ -1896,9 +2034,10 @@ input, textarea { font-family: 'Courier Prime', 'PingFang SC', monospace; }
 
 /* Author input */
 .toolbar-author {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  margin-left: auto;
 }
 .author-label {
   font-family: var(--font-mono);

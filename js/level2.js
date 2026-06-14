@@ -52,6 +52,7 @@ const Level2 = {
       const item = document.createElement('div');
       item.className = 'source-text-item';
       item.dataset.textId = text.id;
+      item.dataset.paper = this.getPaperType(text);
 
       const cuts = this.cuts.get(text.id) || [];
 
@@ -75,8 +76,38 @@ const Level2 = {
         </div>
         <div class="sti-content" data-fulltext="${this.escapeAttr(text.content)}">${contentHtml}</div>
       `;
+
+      const fold = document.createElement('div');
+      fold.className = 'sti-fold-mark';
+      item.appendChild(fold);
+
+      if (this.shouldShowStamp(text)) {
+        const stamp = document.createElement('div');
+        stamp.className = 'sti-ink-stamp';
+        item.appendChild(stamp);
+      }
+
       this.sourceTextsEl.appendChild(item);
     }
+  },
+
+  getPaperType(text) {
+    const paperTypes = ['newsprint', 'magazine', 'letter', 'notebook', 'aged'];
+    const seed = String(text.id) + (text.title || '') + (text.source || '');
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+      hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+    }
+    return paperTypes[hash % paperTypes.length];
+  },
+
+  shouldShowStamp(text) {
+    const seed = String(text.id) + (text.category || '');
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+      hash = (hash * 17 + seed.charCodeAt(i)) >>> 0;
+    }
+    return hash % 3 !== 0;
   },
 
   onTextMouseUp(e) {
