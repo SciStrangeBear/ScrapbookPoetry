@@ -97,7 +97,7 @@ const ExportModule = {
 
   async _deliverImage(canvas, filename) {
     if (this._isMobileDevice()) {
-      const handled = await this._shareImageOnMobile(canvas, filename);
+      const handled = await this._openImageOnMobile(canvas, filename);
       if (handled) return;
     }
 
@@ -113,18 +113,71 @@ const ExportModule = {
     return /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
   },
 
-  async _shareImageOnMobile(canvas, filename) {
-    const blob = await this._canvasToBlob(canvas);
-    if (!blob) return false;
+  async _openImageOnMobile(canvas, filename) {
+    const dataUrl = canvas.toDataURL('image/png');
+    const popup = window.open('', '_blank');
+
+    if (popup) {
+      popup.document.write(`<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>${filename}</title>
+  <style>
+    html, body {
+      margin: 0;
+      background: #111;
+      color: #f3efe6;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 16px;
+    }
+    p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.5;
+      text-align: center;
+      opacity: 0.88;
+    }
+    img {
+      display: block;
+      width: 100%;
+      max-width: 540px;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.28);
+      background: white;
+    }
+  </style>
+</head>
+<body>
+  <p>长按图片即可保存到照片</p>
+  <img src="${dataUrl}" alt="${filename}">
+</body>
+</html>`);
+      popup.document.close();
+      this.app.toast('✅ 已打开图片，可长按保存到照片');
+      return true;
+    }
 
     if (navigator.share && typeof File !== 'undefined') {
+      const blob = await this._canvasToBlob(canvas);
+      if (!blob) return false;
       const file = new File([blob], filename, { type: 'image/png' });
       const shareData = { files: [file], title: filename };
 
       if (!navigator.canShare || navigator.canShare(shareData)) {
         try {
           await navigator.share(shareData);
-          this.app.toast('✅ 已打开系统分享，可保存到照片');
+          this.app.toast('✅ 已打开系统分享');
           return true;
         } catch (error) {
           if (error && error.name === 'AbortError') {
@@ -135,10 +188,6 @@ const ExportModule = {
       }
     }
 
-    const imageUrl = URL.createObjectURL(blob);
-    window.open(imageUrl, '_blank', 'noopener,noreferrer');
-    setTimeout(() => URL.revokeObjectURL(imageUrl), 60 * 1000);
-    this.app.toast('✅ 已打开图片，可长按保存到照片');
     return true;
   },
 
@@ -154,16 +203,18 @@ const ExportModule = {
 
   // ===== 自由拼贴（保留用户原始位置） =====
   buildFreeElement(poem, style) {
-    const exportEl = this._createBaseElement(style, 1080, 720);
+    const exportEl = this._createBaseElement(style, 1080, 1440);
     this._applyFreeLayout(exportEl, poem, style);
     return exportEl;
   },
 
   _applyFreeLayout(container, poem, style) {
+    const EXPORT_W = 1080;
+    const EXPORT_H = 1440;
     let minX = Infinity, minY = Infinity, maxX = 0, maxY = 0;
-    const padding = 48;
-    const usableW = 1080 - padding * 2;
-    const usableH = 720 - padding * 2;
+    const padding = 64;
+    const usableW = EXPORT_W - padding * 2;
+    const usableH = EXPORT_H - padding * 2;
 
     for (const w of poem.words) {
       if (w.x < minX) minX = w.x;
@@ -208,7 +259,7 @@ const ExportModule = {
       container.appendChild(wordEl);
     }
 
-    const finalH = Math.max(720, (maxY + 100) * scale + padding * 2);
+    const finalH = Math.max(EXPORT_H, (maxY + 100) * scale + padding * 2);
     container.style.minHeight = finalH + 'px';
   },
 
