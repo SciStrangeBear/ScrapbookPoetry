@@ -437,17 +437,37 @@ input, textarea { font-family: 'Courier Prime', 'PingFang SC', monospace; }
   background: var(--surface-low);
 }
 .btn-help {
+  -webkit-appearance: none;
+  appearance: none;
   font-family: var(--font-mono);
   font-size: 16px;
   font-weight: 400;
+  width: auto;
+  height: auto;
+  min-width: 0;
+  padding: 0 2px;
+  margin: 0;
   border: none;
+  outline: none;
   background: transparent;
   color: var(--outline);
+  box-shadow: none;
+  border-radius: 0;
   transition: all 0.2s;
 }
 .btn-help:hover {
   color: var(--secondary);
   background: transparent;
+  border: none;
+  box-shadow: none;
+}
+.btn-help:focus,
+.btn-help:focus-visible,
+.btn-help:active {
+  outline: none;
+  border: none;
+  background: transparent;
+  box-shadow: none;
 }
 
 /* ===== Buttons ===== */
@@ -1337,9 +1357,13 @@ input, textarea { font-family: 'Courier Prime', 'PingFang SC', monospace; }
   display: inline-flex;
   align-items: center;
   gap: 8px;
+}
+.canvas-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
   margin-left: auto;
 }
-.canvas-actions { display: flex; gap: 6px; flex-shrink: 0; }
 
 /* Canvas */
 .canvas-container {
@@ -2037,7 +2061,6 @@ input, textarea { font-family: 'Courier Prime', 'PingFang SC', monospace; }
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-left: auto;
 }
 .author-label {
   font-family: var(--font-mono);

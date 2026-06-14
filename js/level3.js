@@ -455,15 +455,9 @@ const Level3 = {
   },
 
   renderPoemTabs() {
+    if (!this.poemTabs) return;
     this.poemTabs.innerHTML = '';
     const poems = this.app.state.poems;
-
-    if (poems.length <= 1) {
-      this.poemTabs.classList.add('hidden');
-      return;
-    }
-
-    this.poemTabs.classList.remove('hidden');
     for (let i = 0; i < poems.length; i++) {
       const tab = document.createElement('button');
       tab.className = 'poem-tab' + (i === this.app.state.currentPoemIdx ? ' active' : '');
