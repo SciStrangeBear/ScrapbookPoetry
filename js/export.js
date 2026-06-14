@@ -63,12 +63,16 @@ const ExportModule = {
               logging: false,
             }).then(canvas => {
               console.log('html2canvas succeeded, mode:', mode, 'canvas:', canvas.width, canvas.height);
-              const link = document.createElement('a');
-              link.download = `拼贴诗_${poemNumber}_${style}${mode === this.MODE_POSTER ? '_海报' : ''}.png`;
-              link.href = canvas.toDataURL('image/png');
-              link.click();
-              document.body.removeChild(exportEl);
-              this.app.toast('✅ 诗已诞生！');
+              const filename = `拼贴诗_${poemNumber}_${style}${mode === this.MODE_POSTER ? '_海报' : ''}.png`;
+              this._deliverImage(canvas, filename)
+                .then(() => {
+                  document.body.removeChild(exportEl);
+                })
+                .catch(err => {
+                  console.error('Deliver image error:', err);
+                  this.app.toast('导出完成，但打开图片失败，请重试');
+                  try { document.body.removeChild(exportEl); } catch(e) {}
+                });
             }).catch(err => {
               console.error('Export error:', err);
               if (err.name === 'SecurityError') {
@@ -89,6 +93,63 @@ const ExportModule = {
       console.error('buildPosterElement error:', e);
       this.app.toast('导出出错：' + e.message);
     }
+  },
+
+  async _deliverImage(canvas, filename) {
+    if (this._isMobileDevice()) {
+      const handled = await this._shareImageOnMobile(canvas, filename);
+      if (handled) return;
+    }
+
+    const link = document.createElement('a');
+    link.download = filename;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    this.app.toast('✅ 诗已诞生！');
+  },
+
+  _isMobileDevice() {
+    const ua = navigator.userAgent || '';
+    return /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+  },
+
+  async _shareImageOnMobile(canvas, filename) {
+    const blob = await this._canvasToBlob(canvas);
+    if (!blob) return false;
+
+    if (navigator.share && typeof File !== 'undefined') {
+      const file = new File([blob], filename, { type: 'image/png' });
+      const shareData = { files: [file], title: filename };
+
+      if (!navigator.canShare || navigator.canShare(shareData)) {
+        try {
+          await navigator.share(shareData);
+          this.app.toast('✅ 已打开系统分享，可保存到照片');
+          return true;
+        } catch (error) {
+          if (error && error.name === 'AbortError') {
+            this.app.toast('已取消分享');
+            return true;
+          }
+        }
+      }
+    }
+
+    const imageUrl = URL.createObjectURL(blob);
+    window.open(imageUrl, '_blank', 'noopener,noreferrer');
+    setTimeout(() => URL.revokeObjectURL(imageUrl), 60 * 1000);
+    this.app.toast('✅ 已打开图片，可长按保存到照片');
+    return true;
+  },
+
+  _canvasToBlob(canvas) {
+    return new Promise(resolve => {
+      if (!canvas.toBlob) {
+        resolve(null);
+        return;
+      }
+      canvas.toBlob(blob => resolve(blob), 'image/png');
+    });
   },
 
   // ===== 自由拼贴（保留用户原始位置） =====
