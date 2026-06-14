@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>拼贴诗工坊 - 剪刀 + 旧杂志 = 你的诗</title>
+<meta name="description" content="从文字中裁剪灵感，拼贴属于你的诗。选材→剪词→拼贴，三步创作你的拼贴诗作品。">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ===== 欢迎页（杂志风格） ===== -->
+  <div id="screen-welcome" class="screen active">
+    <!-- Magazine masthead -->
+    <div class="magazine-masthead">
+      <span class="masthead-logo">✂ 拼贴诗工坊</span>
+      <span class="masthead-meta">COLLAGE POETRY · VOL.01 · 夏季刊</span>
+    </div>
+
+    <!-- Magazine decorative rule -->
+    <div class="magazine-rule"></div>
+
+    <!-- Poetry excerpt cards (decorative background) -->
+    <div class="poetry-card" style="top: 20%; left: 3%; --rot: -3deg;">
+      <p>花开了，就像花睡醒了似的。<br>鸟飞了，就像鸟上天了似的。</p>
+      <span class="poetry-card-source">萧红《呼兰河传》</span>
+    </div>
+    <div class="poetry-card" style="top: 16%; right: 3%; --rot: 2deg;">
+      <p>从前的日色变得慢，<br>车、马、邮件都慢，<br>一生只够爱一个人。</p>
+      <span class="poetry-card-source">木心《从前慢》</span>
+    </div>
+    <div class="poetry-card" style="bottom: 22%; left: 5%; --rot: 1.5deg;">
+      <p>世界就在手边，<br>躺倒就是睡眠。</p>
+      <span class="poetry-card-source">李娟《我的阿勒泰》</span>
+    </div>
+    <div class="poetry-card" style="bottom: 18%; right: 2%; --rot: -2.5deg;">
+      <p>使生如夏花之绚烂，<br>死如秋叶之静美。</p>
+      <span class="poetry-card-source">泰戈尔《飞鸟集》</span>
+    </div>
+    <div class="poetry-card" style="top: 45%; left: -1%; --rot: 4deg;">
+      <p>我们不一样，<br>我们都很棒。</p>
+      <span class="poetry-card-source">金子美玲</span>
+    </div>
+    <div class="poetry-card" style="top: 48%; right: -0.5%; --rot: -3.5deg;">
+      <p>如果你因失去了太阳而流泪，<br>那么你也将失去群星了。</p>
+      <span class="poetry-card-source">泰戈尔《飞鸟集》</span>
+    </div>
+
+    <!-- Floating paper decorations -->
+    <div class="paper-floating" style="--delay: 0s; left: 8%; top: 18%; width: 56px; height: 34px; --rot: 12deg; background: #fdfaf3;"></div>
+    <div class="paper-floating" style="--delay: 2.5s; left: 82%; top: 22%; width: 40px; height: 28px; --rot: -8deg; background: #f0ead6;"></div>
+    <div class="paper-floating" style="--delay: 4.8s; left: 15%; top: 74%; width: 48px; height: 30px; --rot: -15deg; background: #f5f1e7;"></div>
+    <div class="paper-floating" style="--delay: 1.5s; left: 78%; top: 76%; width: 38px; height: 40px; --rot: 6deg; background: #efe6cc;"></div>
+    <div class="paper-floating" style="--delay: 3.5s; left: 48%; top: 10%; width: 42px; height: 28px; --rot: -3deg; background: #faf5ed;"></div>
+
+    <div class="welcome-card">
+      <div class="welcome-scissors">✂</div>
+      <h1>拼贴诗工坊</h1>
+      <p class="welcome-desc"><span class="typewriter-text">从文字中裁剪灵感，拼贴属于你的诗。</span></p>
+      <div class="age-selector">
+        <p class="age-label">选择你的年龄段</p>
+        <div class="age-options">
+          <button class="age-btn" data-age="kid" data-desc="适合小学低年级（3-4 年级）">
+            <span class="age-icon">🌱</span>
+            <span>儿童</span>
+          </button>
+          <button class="age-btn" data-age="youth" data-desc="适合小学高年级至初中（5 年级至初三）">
+            <span class="age-icon">🌿</span>
+            <span>青少年</span>
+          </button>
+          <button class="age-btn" data-age="open" data-desc="适合高中及以上">
+            <span class="age-icon">🌳</span>
+            <span>成人</span>
+          </button>
+        </div>
+      </div>
+      <p class="welcome-hint" id="age-hint">以剪刀为笔，以纸页为田</p>
+    </div>
+    <button class="btn-start" id="btn-start-level1" disabled>开始创作</button>
+  </div>
+
+  <!-- ===== 顶部导航 ===== -->
+  <header id="main-header" class="hidden">
+    <div class="header-left">
+      <span class="logo">✂ 拼贴诗工坊</span>
+      <span class="header-subtitle">剪刀 + 旧杂志 = 你的诗</span>
+      <div class="level-indicator">
+        <span class="level-dot active" data-level="1">选材</span>
+        <span class="level-arrow">→</span>
+        <span class="level-dot" data-level="2">剪裁</span>
+        <span class="level-arrow">→</span>
+        <span class="level-dot" data-level="3">拼贴</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="btn-icon" id="btn-gallery" title="作品集">📂</button>
+      <button class="btn-icon btn-help" id="btn-help" title="关于">?</button>
+      <button class="btn-icon" id="btn-settings" title="设置">⚙</button>
+      <button class="btn-icon" id="btn-restart" title="重新开始">↺</button>
+    </div>
+  </header>
+
+  <!-- ===== 第一关：选材 ===== -->
+  <div id="screen-level1" class="screen">
+    <div class="level-header">
+      <h2>📖 第一关：选材</h2>
+      <p class="level-desc">至少选择 1 篇素材（可多选），选中的文字将在下一关被裁剪。如果不喜欢现有素材，也可以粘贴自己的文字。</p>
+    </div>
+    <div class="selection-bar">
+      <span id="selection-count" class="selection-count">已选 0 篇</span>
+      <div class="selection-actions">
+        <button class="btn btn-outline" id="btn-next-batch">换一批</button>
+        <button class="btn btn-primary" id="btn-to-level2" disabled>进入剪裁 ▶</button>
+      </div>
+    </div>
+    <div class="text-grid" id="text-grid">
+      <!-- JS renders cards here -->
+    </div>
+    <div class="custom-text-section" id="custom-text-section">
+      <div class="custom-text-header" id="custom-text-toggle">
+        <span>📝 没有喜欢的素材？自己来贴</span>
+        <span class="custom-text-arrow">▾</span>
+      </div>
+      <div class="custom-text-body">
+        <p class="custom-text-desc">粘贴你喜欢的文字（文章、歌词、对话、朋友圈……都可以），每段用空行分隔，会自动变成多篇素材。</p>
+        <textarea id="l1-custom-input" rows="4" placeholder="示例：
+在草原上，风从很远的地方吹过来。
+我坐在山坡上，什么也不想。
+
+雨停了，天空出现了一道彩虹。
+孩子们在积水里踩水花。"></textarea>
+        <div class="custom-text-actions">
+          <button class="btn btn-sm btn-outline" id="l1-btn-add-custom">添加到素材库</button>
+          <span class="custom-count" id="l1-custom-count">已添加 0 篇</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 第二关：剪裁 ===== -->
+  <div id="screen-level2" class="screen">
+    <div class="level2-layout">
+      <div class="level2-main">
+        <div class="level-header">
+          <div class="level-header-top">
+            <a class="back-link" id="back-to-level1" onclick="window.app.goToLevel(1)">← 返回选材</a>
+            <h2>✂ 第二关：词中取意</h2>
+          </div>
+          <p class="level-desc">在文本中划选你想要的词或短语，点击「剪下」收入收集框。</p>
+        </div>
+        <div class="source-texts" id="source-texts">
+          <!-- JS renders selected texts here -->
+        </div>
+      </div>
+      <div class="collection-panel" id="collection-panel">
+        <div class="collection-header">
+          <h3>📋 收集框</h3>
+          <span id="word-count" class="word-count">0 个词</span>
+        </div>
+        <div class="collection-body" id="collection-body">
+          <!-- JS renders collected words here -->
+        </div>
+        <div class="collection-footer">
+          <button class="btn btn-text" id="btn-clear-words">清空</button>
+          <button class="btn btn-primary" id="btn-to-level3" disabled="disabled">开始拼贴 ▶</button>
+        </div>
+      </div>
+    </div>
+    <!-- Floating cut button -->
+    <div id="cut-float-btn" class="cut-float-btn hidden">✂ 剪下</div>
+  </div>
+
+  <!-- ===== 第三关：拼贴 ===== -->
+  <div id="screen-level3" class="screen">
+    <div class="level3-layout">
+      <!-- 词库侧栏 -->
+      <div class="wordbank-panel" id="wordbank-panel">
+        <div class="wordbank-header">
+          <h3>📦 词库</h3>
+          <span id="wordbank-count">0</span>
+        </div>
+        <div class="wordbank-body" id="wordbank-body">
+          <!-- JS renders word chips here -->
+        </div>
+        <div class="wordbank-hint">拖拽词到画布上</div>
+      </div>
+      <!-- 虚词弹药库 -->
+      <div class="funcword-panel">
+        <div class="funcword-header" id="funcword-toggle">
+          <span>🔗 虚词弹药库</span>
+          <span class="funcword-arrow" id="funcword-arrow">▾</span>
+        </div>
+        <div class="funcword-body" id="funcword-body">
+          <!-- JS renders function word chips here -->
+        </div>
+      </div>
+      <!-- 拼贴画布区域 -->
+      <div class="canvas-area">
+        <div class="canvas-toolbar">
+          <a class="back-link" id="back-to-level2" onclick="window.app.goToLevel(2)">← 返回剪裁</a>
+          <div class="poem-tabs" id="poem-tabs">
+            <!-- JS renders poem tabs here -->
+          </div>
+          <div class="toolbar-author">
+            <span class="author-label">署名</span>
+            <input type="text" class="author-input" id="author-input" placeholder="匿名" maxlength="20">
+          </div>
+          <div class="canvas-actions">
+            <button class="btn btn-sm btn-outline" id="btn-save-work">📂 保存</button>
+            <button class="btn btn-sm btn-outline" id="btn-add-poem">+ 新增一首</button>
+            <button class="btn btn-sm btn-outline" id="btn-check-ai">🤖 AI 点评</button>
+            <button class="btn btn-sm btn-primary" id="btn-download">⬇ 下载</button>
+          </div>
+        </div>
+        <div class="canvas-container" id="canvas-container">
+          <div class="canvas" id="canvas">
+            <div class="canvas-placeholder" id="canvas-placeholder">
+      <p>从词库拖拽词语到画布上，自由拼贴你的诗</p>
+              <p class="sub">拖拽到相近高度可自动识别为同一行 · 试试海报排版</p>
+            </div>
+          </div>
+          <!-- 风格选择器 -->
+          <div class="style-selector" id="style-selector">
+            <span class="style-label">导出风格：</span>
+            <button class="style-btn active" data-style="newspaper">🗞 旧报</button>
+            <button class="style-btn" data-style="journal">📓 手账</button>
+            <button class="style-btn" data-style="ink">🖌 墨韵</button>
+            <button class="style-btn" data-style="modern">◻ 现代</button>
+          </div>
+          <!-- 排版模式选择器 -->
+          <div class="layout-mode-selector" id="layout-mode-selector">
+            <span class="style-label">排版：</span>
+            <button class="mode-btn active" data-mode="free">✋ 自由拼贴</button>
+            <button class="mode-btn" data-mode="poster">🎨 海报排版</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== AI 点评弹窗 ===== -->
+  <div id="ai-overlay" class="overlay hidden">
+    <div class="ai-modal">
+      <div class="ai-modal-header">
+        <h2>🤖 AI 点评</h2>
+        <button class="btn-icon" id="ai-close">✕</button>
+      </div>
+      <div class="ai-modal-body">
+        <div class="ai-result" id="ai-result">
+          <!-- JS renders review here -->
+        </div>
+      </div>
+      <div class="ai-modal-footer">
+        <button class="btn btn-text" id="ai-close-btn">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 设置弹窗 ===== -->
+  <div id="settings-overlay" class="overlay hidden">
+    <div class="settings-modal">
+      <div class="settings-header">
+        <h2>⚙ 设置</h2>
+        <button class="btn-icon" id="settings-close">✕</button>
+      </div>
+      <div class="settings-body">
+        <div class="setting-item">
+          <label>年龄段</label>
+          <div class="setting-options" id="settings-age">
+            <button class="setting-btn" data-age="kid">🌱 儿童</button>
+            <button class="setting-btn" data-age="youth">🌿 青少年</button>
+            <button class="setting-btn" data-age="open">🌳 成人</button>
+          </div>
+        </div>
+        <div class="setting-item">
+          <label>默认导出风格</label>
+          <div class="setting-options" id="settings-style">
+            <button class="setting-btn" data-style="newspaper">🗞 旧报</button>
+            <button class="setting-btn" data-style="journal">📓 手账</button>
+            <button class="setting-btn" data-style="ink">🖌 墨韵</button>
+            <button class="setting-btn" data-style="modern">◻ 现代</button>
+          </div>
+        </div>
+        <div class="setting-item">
+          <label>进阶功能</label>
+          <div class="setting-option-text">
+            <p>在选材页可以粘贴自己的文字作为素材。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 确认弹窗 ===== -->
+  <div id="confirm-overlay" class="overlay hidden">
+    <div class="confirm-modal">
+      <p id="confirm-msg"></p>
+      <div class="confirm-actions">
+        <button class="btn btn-outline" id="confirm-cancel">取消</button>
+        <button class="btn btn-primary" id="confirm-ok">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 帮助弹窗 ===== -->
+  <div id="help-overlay" class="overlay hidden">
+    <div class="help-modal">
+      <div class="help-header">
+        <h2>✂ 关于拼贴诗工坊</h2>
+        <button class="btn-icon" id="help-close">✕</button>
+      </div>
+      <div class="help-body">
+        <div class="help-section">
+          <h3>什么是拼贴诗？</h3>
+          <p>拼贴诗（Collage Poetry）是一种用现成文字重新组合成诗的方式。你从各种文本中剪下喜欢的词句，像拼贴画一样把它们重新排列，形成全新的诗篇。每一首拼贴诗都是意外的相遇。</p>
+        </div>
+        <div class="help-section">
+          <h3>三步创作</h3>
+          <div class="help-steps">
+            <div class="help-step">
+              <div class="help-step-num">1</div>
+              <div class="help-step-content">
+                <strong>选材</strong>
+                <p>浏览素材库，选择你感兴趣的文本。每一篇都是一块待裁剪的布料。</p>
+              </div>
+            </div>
+            <div class="help-step">
+              <div class="help-step-num">2</div>
+              <div class="help-step-content">
+                <strong>剪词</strong>
+                <p>在文本中划选你想要的词或短语，剪下来收入收集框。</p>
+              </div>
+            </div>
+            <div class="help-step">
+              <div class="help-step-num">3</div>
+              <div class="help-step-content">
+                <strong>拼贴</strong>
+                <p>把剪下的词拖到画布上自由排列，选择风格导出你的作品。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="help-section">
+          <h3>小技巧</h3>
+          <ul class="help-tips">
+            <li>同一行的词尽量拖到相近的高度，<strong>海报排版</strong>会自动识别分行</li>
+            <li>善用<strong>虚词弹药库</strong>中的「的、了、在、和」等词让诗句更流畅</li>
+            <li>点击<strong>+ 新增一首</strong>可以创建多首诗来管理不同的构思</li>
+            <li><strong>AI 点评</strong>可以分析你的诗在主题和情绪上的特点</li>
+            <li>在选材页展开「没有喜欢的素材？自己来贴」可以粘贴你自己的文字</li>
+          </ul>
+        </div>
+      </div>
+      <div class="help-footer">
+        <button class="btn btn-primary" id="help-gotit">知道了</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 作品集弹窗 ===== -->
+  <div id="gallery-overlay" class="overlay hidden">
+    <div class="gallery-modal">
+      <div class="gallery-header">
+        <h2>📂 作品集</h2>
+        <button class="btn-icon" id="gallery-close">✕</button>
+      </div>
+      <div class="gallery-body" id="gallery-body">
+        <!-- JS renders gallery items here -->
+      </div>
+      <div class="gallery-footer">
+        <button class="btn btn-text" id="gallery-close-btn">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast (shared across all screens) -->
+  <div id="toast" class="toast hidden"></div>
+
+</div>
+
+<script src="js/html2canvas.min.js"></script>
+	<script>
+// === TEXT LIBRARY ===
+window.TEXTS = [
+  {id:8,title:'呼兰河传（节选）',source:'萧红《呼兰河传》',category:'散文',ageRange:["kid", "youth", "open"],content:'花开了，就像花睡醒了似的。鸟飞了，就像鸟上天了似的。虫子叫了，就像虫子在说话似的。一切都活了。都有无限的本领，要做什么，就做什么。要怎么样，就怎么样。都是自由的。倭瓜愿意爬上架就爬上架，愿意爬上房就爬上房。黄瓜愿意开一个谎花，就开一个谎花，愿意结一个黄瓜，就结一个黄瓜。若都不愿意，就是一个黄瓜也不结，一朵花也不开，也没有人问它。'},
+  {id:9,title:'城南旧事（节选）',source:'林海音《城南旧事》',category:'散文',ageRange:["kid", "youth"],content:'夏天过去，秋天过去，冬天又来了，骆驼队又来了，但是童年却一去不还。冬阳底下学骆驼咀嚼的傻事，我也不会再做了。可是，我是多么想念童年住在北京城南的那些景色和人物啊！我对自己说，把它们写下来吧，让实际的童年过去，心灵的童年永存下来。我默默地想，慢慢地写。看见冬阳下的骆驼队走过来，听见缓慢悦耳的铃声，童年重临于我的心头。'},
+  {id:16,title:'撒哈拉的故事（节选）',source:'三毛《撒哈拉的故事》',category:'散文',ageRange:["open"],content:'我举目望去，无际的黄沙上有寂寞的大风呜咽地吹过，天，是高的，地，是沉厚雄壮而安静的。正是黄昏，落日将沙漠染成鲜血的红色，凄艳恐怖。近乎初冬的气候，在原本期待着炎热烈日的心情下，大地化转为一片诗意的苍凉。荷西静静地等着我，我看了他一眼，我们是没有泪的人。'},
+  {id:19,title:'小王子（节选）',source:'圣埃克苏佩里著 马振骋译《小王子》',category:'经典文学',ageRange:["kid", "youth", "open"],content:'如果你驯养了我，我们就会彼此需要。对我来说，你就是世界上唯一的了；对你来说，我也是世界上唯一的了。你看到那片麦田吗？我不吃面包。麦子对我来说，毫无用处。但是你有金黄色的头发。一旦你驯养了我，这就会变得很美妙！金黄色的麦子，会让我想起你。我会喜欢风吹麦田的声音。你下午四点钟来，那么从三点钟起，我就开始感到幸福了。'},
+  {id:20,title:'夏洛的网（节选）',source:'E·B·怀特著 任溶溶译《夏洛的网》',category:'经典文学',ageRange:["kid", "youth"],content:'在农场里，初夏的日子是一年中最快活最美好的。丁香花开得正盛，空气里弥漫着花香。苹果树上的花朵已经落尽，小小的青色苹果开始冒出来。公园里的草又长又绿，草长莺飞。在温暖的傍晚，蟋蟀开始低吟浅唱。再过些日子，还会有更多的夏夜歌手加入这场音乐会。威尔伯觉得在谷仓里生活真是太幸福了，每天有吃的，有朋友，还有蜘蛛夏洛给他讲故事。'},
+  {id:21,title:'窗边的小豆豆（节选）',source:'黑柳彻子著 赵玉皎译《窗边的小豆豆》',category:'经典文学',ageRange:["kid", "youth"],content:'小豆豆以前从未见过这么有趣的学校。校门是用矮矮的树篱做成的，树上还挂着叶子。教室是六辆真正的电车！小豆豆兴奋极了。她从来没有想过，居然可以用电车当教室。校长先生让她自由选择座位，她坐到窗边的位置，把电车窗玻璃推上去，向外面望去。校园里盛开着樱花，花瓣随风飘进车厢，落在小豆豆的膝盖上。'},
+  {id:23,title:'柳林风声（节选）',source:'肯尼斯·格雷厄姆著 杨静远译《柳林风声》',category:'经典文学',ageRange:["kid", "youth"],content:'整个上午，鼹鼠都在他的小房子里忙碌着，又是扫又是擦。刷子、扫帚、抹布，全用上了。他一会儿爬上梯子，一会儿跳下椅子，忙得满头大汗。春天在空气中荡漾，唤醒了他心底那种对阳光和田野的渴望。他甩掉刷子，推开椅子，踢掉拖鞋，一把拉开房门，冲向外面广阔的世界。温暖的阳光洒在他身上，草地的气息扑面而来，远处传来小河哗啦啦的歌唱声。'},
+  {id:24,title:'外卖诗人王计兵',source:'《人物》2023年',category:'新闻纪实',ageRange:["youth", "open"],content:'王计兵当了五年的外卖骑手，在送餐间隙写了四千多首诗。他的手机备忘录里存满了诗句，等红灯的时候写两句，等餐的时候写两句，深夜回到出租屋再整理。他说写诗让他能从日常的疲惫里抽离出来，像一个站在高处俯瞰自己生活的人。他的诗句质朴粗粝，像水泥地上长出的草，带着生活的重量和温度。'},
+  {id:25,title:'宛平城最后的铁匠铺',source:'《三联生活周刊》',category:'新闻纪实',ageRange:["youth", "open"],content:'在宛平城的一条老巷子里，七十三岁的老铁匠刘师傅守着祖传三代的铁匠铺。炉火烧了快一百年，风箱还在吱呀作响。他打的菜刀，刀刃锋利，刀背厚实，一把能用二十年。刘师傅说现在没人愿意学这门手艺了，铁匠铺的墙上挂满了打好的农具，落了一层薄灰。他每天还是会生火、打铁，叮叮当当的声音在巷子里回荡。'},
+  {id:26,title:'秦岭深处的养蜂人',source:'《中国国家地理》',category:'新闻纪实',ageRange:["youth", "open"],content:'老赵在秦岭深处养了三十年蜜蜂。他的蜂箱散落在山腰上，被茂密的树林和野花包围着。每年春天，山上的野樱花开成一片粉白的云海，蜜蜂嗡嗡地忙碌着，从这朵花飞到那朵花。老赵说养蜂人要学会等待，等待花开，等待蜜蜂酿蜜，等待最好的时机取蜜。取蜜的时候不能急，要给蜜蜂留够过冬的粮食，人才能心安理得地享用这份甘甜。'},
+  {id:27,title:'北京胡同里的修书人',source:'《南方周末》',category:'新闻纪实',ageRange:["youth", "open"],content:'在北京东城区的一条老胡同里，藏着一家古籍修复工作室。五十岁的陈师傅戴着白手套，用镊子小心翼翼地揭开粘连的书页。一本清代的地方志被虫蛀得千疮百孔，他要用特制的纸浆一点一点补好。书页薄如蝉翼，手稍微重一点就会碎。陈师傅说修书就像给人看病，要望闻问切，每一本书都有自己的脾气。'},
+  {id:28,title:'高原上的电影放映员',source:'《新周刊》',category:'新闻纪实',ageRange:["youth", "open"],content:'扎西是甘南草原上最后一个流动电影放映员。每个月，他用摩托车驮着放映设备，翻越海拔四千米的山口，去那些没有通电的牧区放电影。银幕在两座帐篷之间挂起来，风大的时候像帆一样鼓动。牧民们从几十公里外骑马赶来，裹着厚厚的藏袍，围坐在草地上。当银幕亮起来的瞬间，所有人的眼睛都在发光，高原的夜空下，电影里的世界和现实的世界仿佛重叠了。'},
+  {id:29,title:'天宫纪事',source:'《人民日报》',category:'新闻纪实',ageRange:["youth", "open"],content:'神舟飞船腾空而起的瞬间，火光映红了整个发射场。三名航天员在失重的环境里漂浮起来，窗外的地球宁静地旋转着，蓝白相间的轮廓在黑暗中格外耀眼。指令长凝视着舷窗外，云层之下是故乡的方向。在空间站的六个月里，他们做了百余项科学实验，种出了太空水稻，看着一粒种子在失重环境下发芽、拔节、抽穗。'},
+  {id:30,title:'景德镇的年轻陶艺人',source:'《一条》',category:'新闻纪实',ageRange:["youth", "open"],content:'从美院毕业之后，小杨没有去大城市，而是一个人来到景德镇，在三宝村租了一间老房子做陶。拉坯机转动起来的时候，湿润的泥土在他手中缓缓改变形状，变成杯子、碗盏、花瓶。他说做陶让人踏实，因为你必须诚实地面对每一道工序。要是心浮气躁，坯体在拉坯机上就会歪掉。烧窑更是一场等待，火候到了，泥巴才会变成瓷器。'},
+  {id:31,title:'东极岛的灯塔守护者',source:'《国家人文历史》',category:'新闻纪实',ageRange:["youth", "open"],content:'东极岛最东端的礁石上，矗立着一座白色的灯塔。五十八岁的守塔人老林在岛上待了二十六年，每天的工作是擦拭透镜、检查电路、记录航海日志。台风天，浪头可以打到灯塔的三层楼高，整座塔都在摇晃。他说灯塔的光能照到二十海里以外，夜航的船看到这束光就知道离岸不远了。现代化的导航系统早就取代了灯塔的功能，但老林还是每天准时开灯。'},
+  {id:32,title:'上海弄堂里的裁缝',source:'《ELLEMEN》',category:'新闻纪实',ageRange:["youth", "open"],content:'静安寺附近的一条弄堂深处，藏着一家做了四十年的裁缝铺。老板姓王，今年六十五岁，从十六岁开始学做衣服。案板上堆满了皮尺、划粉、剪刀和针线。他说做西装最讲究的是肩线，多一分布料就鼓，少一分就塌。量尺寸的时候，他不用尺子，手一搭，眼睛一瞄，就知道客人要什么版型。老客户从年轻时就找他做衣服，现在头发都白了，他还记得每个人的尺寸。'},
+  {id:33,title:'喀什古城的手工匠人',source:'《中国国家地理》',category:'新闻纪实',ageRange:["kid", "youth", "open"],content:'喀什古城的巷子里，铜器匠人艾孜买提正在用小锤敲打一只铜壶。叮叮当当的声响从早响到晚，和茶馆里老人们的谈笑声混在一起。铜壶上要錾刻巴旦木花纹，需要上千次精准的敲击。他说每一只壶都长得不一样，因为手工的痕迹就是人的痕迹。巷子尽头，打馕的小伙子把面饼贴在馕坑内壁上，烤熟的馕金黄酥脆，麦香飘满了整条街。'},
+  {id:34,title:'山居岁月',source:'《散文》月刊',category:'散文',ageRange:["youth", "open"],content:'山中的日子是缓慢的。清晨在鸟鸣中醒来，推开门，雾气从山谷里涌上来，像一层薄薄的纱。露水挂在草尖上，阳光一照，亮晶晶的。柴火在灶膛里噼啪作响，铁锅里的粥咕嘟咕嘟冒着热气。这里没有快递和外卖，最近的集市要走两个小时山路。但奇怪的是，在这里我从未感到匮乏。满山的野花、松涛、溪水声，已经足够填满一个人的所有感官了。'},
+  {id:35,title:'夜航船',source:'《旅行家》',category:'散文',ageRange:["kid", "youth", "open"],content:'夜航船是江南水乡最后的浪漫。船在漆黑的水面上缓缓前行，两岸的人家已经熄了灯，只剩下船头的一盏孤灯照着前方的水路。船桨划破水面，发出轻柔的哗哗声。躺在船舱里，能听见水波拍打船底的声音，像是一首古老的催眠曲。偶尔有一艘夜行的货船擦肩而过，船上的人互相打个招呼，声音在水面上传得很远很远。'},
+  {id:36,title:'雨天的书',source:'《读书》',category:'散文',ageRange:["kid", "youth", "open"],content:'下雨天最适合读书。雨打在玻璃窗上，发出细密的声响，像是一首没有旋律的背景音乐。屋里只开一盏台灯，光晕笼罩着书页。茶的热气缓缓升腾，在空中画出柔软的曲线。这时候读什么书都好看，哪怕是翻了无数遍的老书，也能读出新的滋味来。雨声把世界隔在外面，书里的世界却在眼前铺展开来。'},
+  {id:37,title:'爷爷的菜园',source:'《故园》',category:'散文',ageRange:["kid", "youth", "open"],content:'爷爷退休后把屋后的空地开垦成了菜园。他每天天不亮就起来浇水，等太阳出来的时候，菜叶上的水珠已经被晒干了。豆角的藤蔓顺着竹架子往上爬，到了夏天就在架子上搭出一条绿色的走廊。丝瓜开花的时候，黄色的花朵在晨光里特别耀眼。西红柿熟透的时候红彤彤的，摘一个在衣服上蹭蹭就咬，酸甜的汁水顺着手腕往下淌。'},
+  {id:38,title:'慢下来的时光',source:'《三联生活周刊》',category:'散文',ageRange:["youth", "open"],content:'在这个一切都追求快的时代，慢变成了一种奢侈。我们习惯了倍速看剧、碎片阅读、外卖半小时送达。但我渐渐发现，那些真正美好的时刻往往是慢的。比如煮一锅需要炖两个小时的汤，看着食材在锅里慢慢翻滚，香气一点一点弥漫开来。比如什么也不做，就坐在窗边看云慢慢移动，从一朵变成另外一朵。比如在黄昏里散步，看路灯一盏一盏亮起来。'},
+  {id:39,title:'旧物',source:'《读者·原创版》',category:'散文',ageRange:["youth", "open"],content:'妈妈的老樟木箱子里藏着许多旧物。有一条我小时候穿过的碎花裙子，叠得整整齐齐，散发着樟脑和木头混合的气味。有一沓信，是我上大学时写给家里的，信封上的邮票还完好无损。还有一本泛黄的相册，照片里的人都还很年轻，穿着那个时代特有的衣服，笑容腼腆又真诚。每一件旧物都是一把钥匙，能打开一段被遗忘的时光。'},
+  {id:40,title:'月光下的城市',source:'《城市画报》',category:'散文',ageRange:["youth", "open"],content:'凌晨两点，我站在天台上看这座城市。高楼的灯光稀稀疏疏的，像一片倒扣的星空。远处的高架桥上偶尔有一辆车驶过，车灯划出一道光线，又迅速消失在夜色中。这座城市在白天是喧嚣的、拥挤的、让人喘不过气的。但在凌晨，它终于安静下来，露出疲惫而真实的面容。一阵风吹过来，带着夜晚特有的凉意和湿气。'},
+  {id:41,title:'菜市场',source:'《人间有味》',category:'散文',ageRange:["kid", "youth", "open"],content:'如果你不快乐，就去逛菜市场吧。那里有最鲜活的生活——青菜上还带着晨露，活鱼在盆里扑腾出水花。卖豆腐的大姐一边切豆腐一边接电话，卖肉的大叔手起刀落干脆利落。讨价还价的声音、寒暄聊天的声音、塑料袋哗啦哗啦的声音，交织成一首生活的交响曲。一个老奶奶在每个摊位前认真挑选，最后只买了一把小葱，颤巍巍地数着零钱。'},
+  {id:42,title:'一碗面',source:'《风味人间》',category:'散文',ageRange:["kid", "youth", "open"],content:'深夜回到家，发现厨房的灯还亮着。灶台上放着一个小锅，掀开盖子，是妈妈煮好的面条。面条泡在清汤里，已经有些坨了，上面卧着一个荷包蛋，旁边码着几片青菜。汤面上浮着一层薄薄的油花，葱花和香菜点缀其间。我就站在厨房里吃了起来，面条虽然软了，但味道还是那个味道。吃着吃着，眼睛就有点模糊了。'},
+  {id:43,title:'柿子树',source:'《草木春秋》',category:'散文',ageRange:["kid", "youth", "open"],content:'老家庭院里的那棵柿子树，是我关于秋天的全部记忆。霜降过后，满树的叶子落得差不多了，只剩下红彤彤的柿子挂在枝头，像一盏盏小灯笼。爷爷用竹竿做一个网兜，把高处的柿子一个一个摘下来。刚摘的柿子很涩，要放在米缸里捂几天才能吃。捂熟了的柿子软软的，撕开一个小口，用嘴一吸，满口都是蜜一样的甜。离开老家后再也没吃过那么好吃的柿子了。'},
+  {id:44,title:'写信的人',source:'《文学报》',category:'散文',ageRange:["youth", "open"],content:'朋友是一个还在坚持写信的人。他出差去一个陌生的城市，会去当地邮局寄一张明信片。明信片上只有寥寥几句话：这里的日落很好看，想和你一起看。他的字算不上好看，但认认真真，每一笔都工整。他说写字和打字是不一样的——打字是敲击，写字是流淌。那些在心里反复斟酌过的句子，经过笔尖传递到纸上，带着体温和指纹。'},
+  {id:45,title:'秋天的味道',source:'《四季随笔》',category:'散文',ageRange:["kid", "youth", "open"],content:'秋天是有味道的。走在落叶铺满的人行道上，脚下发出咔嚓咔嚓的声响，空气中飘着桂花的甜香。路边有人在卖糖炒栗子，大铁锅里黑色的砂子和栗子一起翻滚，糖浆的焦香和栗子的粉香混在一起，勾起了所有的馋虫。买一袋热乎乎的栗子捧在手心，暖意从指尖传到心里。剥开一颗，金黄色的果肉冒着热气，入口绵软香甜。'},
+  {id:46,title:'蝉鸣',source:'法布尔《昆虫记》',category:'科普自然',ageRange:["kid", "youth", "open"],content:'蝉的音乐是夏日最嘹亮的宣告。它们在地下度过了漫长的幼虫期，有的长达数年，在黑暗的泥土里吸食树根的汁液，等待那个破土而出的时刻。当夏天的温度达到一定程度，它们集体从地下钻出来，爬上树干，蜕去外壳，展开湿润的翅膀。雄蝉用腹部的鼓膜发出震耳欲聋的鸣叫，不是为了艺术，只是为了寻找伴侣。它们在这个世界上只活一个夏天，从早唱到晚，用尽全部的力气。'},
+  {id:47,title:'候鸟的远征',source:'《迁徙的鸟》',category:'科普自然',ageRange:["kid", "youth", "open"],content:'每年秋天，数十亿只鸟从北半球的繁殖地向南迁徙。它们飞过高山、沙漠、海洋，有些鸟要连续飞行几千公里不休息。斑尾塍鹬创造了鸟类不间断飞行的纪录——从阿拉斯加到新西兰，整整十一天不吃不喝不落地。它们依靠地球的磁场、太阳的位置和星星的指引来导航。没有人教它们路线，基因里写着一幅古老的地图。'},
+  {id:48,title:'深海里的光',source:'《海洋·深蓝》',category:'科普自然',ageRange:["kid", "youth", "open"],content:'在阳光永远无法到达的深海，黑暗是永恒的。但生命总有办法发光。水母拖着长长的触手，发出幽幽的蓝绿色光芒，像一群漂浮的星星。鮟鱇鱼头顶悬挂着一个发光的灯笼，那是它的诱饵，在黑暗中一明一灭。深海乌贼喷出荧光的墨汁，让捕食者在光怪陆离中迷失方向。这些光是生物化学反应的结果，是生命在极端环境中创造出来的奇迹。'},
+  {id:49,title:'一棵树的生态',source:'《森林的故事》',category:'科普自然',ageRange:["kid", "youth", "open"],content:'一棵树就是一个微缩的宇宙。它的树冠是鸟类和昆虫的家园，树干上是苔藓和地衣的领地，树根周围是一个庞大的地下网络。科学家发现树和树之间会通过菌根网络传递信息，一棵树受到虫害攻击时，会释放化学信号，通过土壤中的真菌网络传递给周围的树，让它们提前做好准备。森林里的树不是独立的个体，它们是一张互联的网络。'},
+  {id:50,title:'星星的颜色',source:'《天文爱好者》',category:'科普自然',ageRange:["kid", "youth", "open"],content:'用肉眼仰望星空，大多数星星看起来都是白色的。但如果用望远镜仔细观察，就会发现星星其实有不同的颜色。蓝色的星星温度最高，表面温度可以达到几万度，像燃烧的蓝焰。白色的星星温度稍低。黄色的星星温度适中，我们的太阳就是一颗黄矮星。红色的星星温度最低，比如参宿四，它是一颗已经步入晚年的红超巨星，有一天会以超新星爆发的方式结束自己的生命。'},
+  {id:51,title:'一粒种子的旅行',source:'《植物的智慧》',category:'科普自然',ageRange:["kid", "youth"],content:'植物不会走路，但它们的种子会旅行。蒲公英的种子带着毛茸茸的冠毛，像一顶顶小降落伞，风一吹就飘向远方。苍耳的种子长满了倒钩，挂在动物的皮毛或人的衣服上，不声不响地搭便车去陌生的地方。喷瓜的种子更有意思，成熟的时候果实会突然炸开，把种子像炮弹一样射出去。椰子则选择了水路，漂洋过海，在另一个海岛上生根发芽。'},
+  {id:52,title:'蜘蛛丝',source:'《微观世界》',category:'科普自然',ageRange:["kid", "youth", "open"],content:'蜘蛛丝是自然界最神奇的材料。它的强度是同等重量钢铁的五倍，延展性比尼龙还好。一根铅笔粗细的蜘蛛丝理论上可以拦住一架正在飞行的波音飞机。蛛网的设计同样精妙，辐射状的丝线是骨架，螺旋状的捕丝带有黏性。一只园蛛织一张网只需一个小时，网上的每一个夹角都经过了精确的计算。更神奇的是，蜘蛛会吃掉旧网，回收其中的蛋白质，用来编织新的网。'},
+  {id:53,title:'珊瑚礁',source:'《海洋生态》',category:'科普自然',ageRange:["kid", "youth"],content:'珊瑚礁被称为海洋中的热带雨林。它们只占海洋面积的不到百分之一，却养育了四分之一的海洋生物。五颜六色的珊瑚虫聚集成群，分泌出碳酸钙骨骼，一代又一代地堆积，经过千万年形成了巨大的礁体。小丑鱼在海葵的触手间穿梭，海马卷着尾巴挂在海草上，海龟慢悠悠地游过。然而，全球变暖正在威胁珊瑚礁的生存，当海水温度过高时，珊瑚会白化。'},
+  {id:65,title:'从前慢（节选）',source:'木心《云雀叫了一整天》',category:'诗歌',ageRange:["kid", "youth", "open"],content:'记得早先少年时，大家诚诚恳恳，说一句是一句。清早上火车站，长街黑暗无行人，卖豆浆的小店冒着热气。从前的日色变得慢，车、马、邮件都慢，一生只够爱一个人。从前的锁也好看，钥匙精美有样子。你锁了，人家就懂了。'},
+  {id:66,title:'挪威的森林（节选）',source:'村上春树著 林少华译',category:'经典文学',ageRange:["youth", "open"],content:'死并非生的对立面，而作为生的一部分永存。我们唯一能做的事，就是从这片混乱中找出对自己有用的东西，通过把它们加以组合和反复来充实自己。每一次，我都这么想——在那些一边听着古老的摇滚乐、一边无所事事地度过漫长下午的日子里，我们究竟认识了些什么呢？我们就像在浓雾中行走的人，看不清前面的路，却仍然要往前走。'},
+  {id:67,title:'飞鸟集（节选）',source:'泰戈尔著 郑振铎译',category:'诗歌',ageRange:["kid", "youth", "open"],content:'如果你因失去了太阳而流泪，那么你也将失去群星了。世界对着它的爱人，把它浩翰的面具揭下了。鸟儿愿为一朵云，云儿愿为一只鸟。不要因为峭壁是高的，便让你的爱情坐在峭壁上。我们把世界看错了，反说它欺骗我们。使生如夏花之绚烂，死如秋叶之静美。夜把花悄悄地开放了，却让白日去领受谢词。'},
+  {id:68,title:'一只特立独行的猪（节选）',source:'王小波《沉默的大多数》',category:'散文',ageRange:["youth", "open"],content:'我见过一只十分特立独行的猪。它又黑又瘦，两眼炯炯有光。这家伙像山羊一样敏捷，一米高的猪栏一跳就过；它还能跳上猪圈的房顶，这一点又像是猫——所以它总是到处游逛，根本就不在圈里待。人对生活做种种设置，但猪和生活的关系是被设置和设置者的关系。但这只猪与众不同，它拒绝被设置，它要按自己的方式生活。最后它长出了獠牙，在甘蔗地里逍遥地奔跑。'},
+  {id:69,title:'红玫瑰与白玫瑰（节选）',source:'张爱玲《红玫瑰与白玫瑰》',category:'经典文学',ageRange:["open"],content:'也许每一个男子全都有过这样的两个女人，至少两个。娶了红玫瑰，久而久之，红的变了墙上的一抹蚊子血，白的还是床前明月光；娶了白玫瑰，白的便是衣服上沾的一粒饭黏子，红的却是心口上一颗朱砂痣。普通人的一生，再好些也是桃花扇，撞破了头，血溅到扇子上，就在这上面略加点染成为一枝桃花。'},
+  {id:70,title:'逍遥游（节选）',source:'《庄子》',category:'经典文学',ageRange:["youth", "open"],content:'北冥有鱼，其名为鲲。鲲之大，不知其几千里也。化而为鸟，其名为鹏。鹏之背，不知其几千里也。怒而飞，其翼若垂天之云。是鸟也，海运则将徙于南冥。南冥者，天池也。鹏之徙于南冥也，水击三千里，抟扶摇而上者九万里，去以六月息者也。野马也，尘埃也，生物之以息相吹也。天之苍苍，其正色邪？其远而无所至极邪？'},
+  {id:72,title:'百年孤独（节选）',source:'加西亚·马尔克斯著 范晔译',category:'经典文学',ageRange:["open"],content:'多年以后，面对行刑队，奥雷里亚诺·布恩迪亚上校将会回想起父亲带他去见识冰块的那个遥远的下午。那时的马孔多是一个二十户人家的村落，泥巴和芦苇盖成的房子沿河岸排开，湍急的河水清澈见底，河床里卵石洁白光滑宛如史前巨蛋。世界新生伊始，许多事物还没有名字，提到的时候尚需用手指指点点。每年三月，一伙吉卜赛人会在村口搭起帐篷，带着磁铁、望远镜和冰块的魔法。'},
+  {id:73,title:'独一无二的伊凡（节选）',source:'凯瑟琳·艾波盖特著 张子漠译',category:'经典文学',ageRange:["kid", "youth"],content:'我叫伊凡，我是一只大猩猩。我不太记得丛林了。但我记得商场的味道——爆米花、棉花糖和汗味混在一起的味道。我住在玻璃笼子里，人类隔着玻璃看我，我隔着玻璃看他们。他们说我是购物中心的明星，但我只想念树。不是一棵具体的树，而是所有树。头顶有风穿过树叶的声音，脚下有泥土的温度。露娜是一头老象，她说当你活到足够长，你会明白一个道理：记忆是唯一真正属于你的东西。'},
+  {id:74,title:'兔子坡（节选）',source:'罗伯特·罗素著 陈诗纮译',category:'经典文学',ageRange:["kid", "youth"],content:'整个兔子坡都沸腾了。新人家要来了！这个消息像野火一样传遍了整个山谷。小兔子乔奇兴奋得在草地上翻了三个跟头。老爹放下啃了一半的苜蓿，若有所思地说，新人家会不会像我们盼望的那样好呢？在兔子坡，每一户新邻居的到来都是一件大事。因为兔子们知道，人类的好坏决定了他们的冬天是丰盛还是难熬。阿那达斯叔公捋着灰白的胡须说，他活了这么久，学到的唯一教训就是——永远不要对人类抱太大期望。'},
+  {id:75,title:'手斧男孩（节选）',source:'盖瑞·伯森著 陈雅茜译',category:'经典文学',ageRange:["youth", "open"],content:'飞机驾驶员死了。十三岁的布莱恩知道这一点。前一秒飞行员还在说话，后一秒他的身体就歪倒在一边，脸上的表情让布莱恩不想再回忆。飞机还在飞，但没有人驾驶了。下面是加拿大的荒野，无尽的森林和湖泊像一块打翻的绿毯。布莱恩手里只有一把妈妈给的手斧。他不知道自己在哪儿，不知道飞机还能飞多久，不知道坠毁后能不能活下来。但他知道如果什么都不做，他就会死。所以他握紧了那把小手斧。'},
+  {id:76,title:'银河铁道之夜（节选）',source:'宫泽贤治著 周龙梅译',category:'经典文学',ageRange:["kid", "youth", "open"],content:'乔邦尼觉得自己的脑袋里像是一片星空，数不清的念头在闪烁。他跑上小山坡，躺倒在草地上。天空中的银河像一条白茫茫的大河，从南到北横贯天际。河水深处，似乎有某种比水更清澈、比玻璃更透明的物质在流动。他觉得自己的整个身体都在慢慢地融化，变成银河的一部分。远处传来火车的汽笛声，他闭上眼睛，仿佛看见一列金黄色的列车沿着银河的轨迹，向着宇宙深处驶去。'},
+  {id:77,title:'金子美玲童谣（节选）',source:'金子美玲著 吴菲译',category:'诗歌',ageRange:["kid", "youth", "open"],content:'我展开双臂，也不能在天空飞翔。但会飞的小鸟，也不能像我一样在大地上奔跑。我摇晃身体，也摇不出好听的声音。但会响的铃铛，也不能像我一样会唱好多歌。铃铛、小鸟、还有我，我们不一样，我们都很棒。谁都不要告诉好吗？清晨庭院角落里，花儿悄悄掉眼泪的事。万一这事说出去了，传到蜜蜂的耳朵里，它会像做了亏心事一样，把蜂蜜还回去的。'},
+  {id:78,title:'万物静默如谜（节选）',source:'辛波斯卡著 陈黎译',category:'诗歌',ageRange:["youth", "open"],content:'当我说“无”这个词，我创造了某种无中生有的东西。我偏爱写诗的荒谬，胜过不写诗的荒谬。我偏爱牢记此一可能——存在的理由不假外求。我们通晓地球到月球的种种，却对隔邻的黑暗一无所知。因为存在，所以存在。你的职责是寻找你的职责，然后倾尽一生去完成它。生命，无论多么短暂漫长，都只有一次。而我要选择我的死亡，我的方式是活过。'},
+  {id:79,title:'小时候（节选）',source:'林良《小太阳》',category:'散文',ageRange:["kid", "youth"],content:'那个时代，没有电视，没有电脑，但是我们的童年很快乐。夏天的晚上，搬一张小板凳坐在院子里，听大人讲故事。星星在头顶亮晶晶的，萤火虫在草丛里飞，凉风习习地吹过来。故事永远是讲不完的，什么牛郎织女啦，孙悟空大闹天宫啦。有时候父亲会拿出一把胡琴，咿咿呀呀地拉起来。那个时候我就觉得，日子虽然过得简单，但是每一天都像一颗糖，含在嘴里甜滋滋的。'},
+  {id:80,title:'活着（节选）',source:'谷川俊太郎著 田原译',category:'诗歌',ageRange:["youth", "open"],content:'活着，所谓现在活着，那就是口渴。是枝叶间射下来耀眼的光，是记忆里忽然响起的一支曲子，是打喷嚏。是和你手牵手。活着，所谓现在活着，那就是超短裙，是天文馆，是约翰·施特劳斯，是毕加索，是阿尔卑斯山。是遇到一切美好的事物，还要小心翼翼地避开一些丑陋。活着，所谓现在活着，那就是此刻的我自己。六月的蝴蝶在我腹中飞舞。我把悲伤喜欢过了，我把活着喜欢过了。'},
+  {id:81,title:'英文诗两首（节选）',source:'博尔赫斯著 王永年译',category:'诗歌',ageRange:["youth", "open"],content:'我用什么才能留住你？我给你贫穷的街道、绝望的日落、破败郊区的月亮。我给你一个久久地望着孤月的人的悲哀。我给你我写的诗中所蕴含的全部悟性，以及我生活中全部的男子气概。我给你一个从未有过信仰的人的忠诚。我给你我设法保全的我自己的核心——一个不向命运妥协的灵魂。我给你你从未到过的城市、从未见过的风景。我给你一个在图书馆里度过一生的孤独者的黄昏。'},
+  {id:82,title:'二十首情诗（节选）',source:'聂鲁达著 李宗荣译',category:'诗歌',ageRange:["youth", "open"],content:'当华美的叶片落尽，生命的脉络才历历可见。是不是我的爱情也会像秋天的树叶，在某一天飘落？那时我将赤裸地站在你面前，像一棵冬天的树。但我不会悲伤，因为我深知——我的根已经深深地扎进了你的土壤里。我想望你的眼睛，当黄昏靠近，我想用你的双手抚摸黄昏的边缘。我记得你去年秋天的模样，灰色的贝雷帽，平静的心。晚霞的火焰在你的眼里争斗，树叶纷纷坠落你灵魂的水面。'},
+  {id:83,title:'守羊人（节选）',source:'费尔南多·佩索阿著 闵雪飞译',category:'诗歌',ageRange:["youth", "open"],content:'我不匆忙，太阳和月亮也不匆忙。没有人比他们的腿更匆忙。我不把花朵摘下插在花瓶里，我看它们，于是我快乐。我从每一个声音里听到另一种寂静。我是我喜欢成为的那个尺寸，那个去感受的人。我拥有被风吹过的感觉。我因看见而存在。我对生活的全部要求，就是继续这样活着。我不为过去哀悼，也不为未来焦虑。我只存在，不为什么，就这么存在着。'},
+  {id:84,title:'我的阿勒泰（节选）',source:'李娟《我的阿勒泰》',category:'散文',ageRange:["youth", "open"],content:'世界就在手边，躺倒就是睡眠。嘴里吃的是食物，身上裹的是衣服。在这里，我不知道还能有什么遗憾。在阿勒泰，草长得比人还高，风从旷野的尽头吹过来，带着草籽和尘土的味道。有时候我躺在草地上，看着天空从蓝变成紫再变成黑，星星一颗接一颗地跳出来。哈萨克人骑着马从山坡上下来，马蹄声由远而近又由近而远。我觉得自己正在被这个世界遗忘。可是被遗忘的感觉竟然是这么舒服。'},
+  {id:85,title:'风沙星辰（节选）',source:'圣埃克苏佩里著 马振骋译',category:'散文',ageRange:["youth", "open"],content:'飞机揭开了大地的真面目。在飞机上，你才第一次看清地球的真正面目——它不是地图上那些彩色的色块，而是一块被风和水雕刻的岩石。沙漠不是荒芜的，它是活的。沙丘的曲线在风中缓慢变化，像大海的波浪凝固成了金色。在这里，一个人终于可以面对他自己。因为在沙漠里，除了你自己的心跳和呼吸，什么声音都没有。你会第一次发现，生命中最珍贵的东西，恰恰是那些最看不见的——就像沙漠里的泉水，藏在地下深处。'},
+  {id:86,title:'海风中失落的血色馈赠（节选）',source:'阿利斯泰尔·麦克劳德著 陈以侃译',category:'经典文学',ageRange:["youth", "open"],content:'海是灰色的，天空是灰色的，灰色之上还有灰色。布雷顿角的夏天短暂得像一个谎言。矿工们在地下深处凿煤，他们的脸和手被煤尘染成黑色，只有眼睛是白的。海面上，渔夫们在雾中收网，渔线在冰冷的水中垂下去，一直垂到黑暗里。这个地方的人不爱说话。他们用沉默交流，用眼神说再见。但你待久了就会明白，他们的沉默里藏着一切——对大西洋的敬畏、对矿井的恐惧、对远方儿女的思念。'},
+  {id:87,title:'寂静的春天（节选）',source:'蕾切尔·卡森著 吕瑞兰译',category:'科普自然',ageRange:["youth", "open"],content:'从前，有一个城镇，坐落在像棋盘般排列整齐的繁荣农场中央。春天，繁花像白色的云朵点缀在田野上。秋天，橡树和枫树火焰般的颜色照亮了山坡。狐狸在山间叫唤，鹿群静静地穿过田野。小路两旁生长着月桂树和赤杨。直到一种白色的粉末像霜一样覆盖了整个大地。一切都改变了。神秘的疾病席卷了鸟群，鸡窝里不再有雏鸡，苹果树上不再有花朵。春天变得寂静了，不再有鸟鸣。曾经充满生命的地方，现在只剩下沉默。'},
+  {id:88,title:'变形记（节选）',source:'卡夫卡著 李文俊译',category:'经典文学',ageRange:["youth", "open"],content:'一天早晨，格里高尔·萨姆沙从不安的睡梦中醒来，发现自己躺在床上变成了一只巨大的甲虫。他仰卧着，背硬得像铁甲；稍稍一抬头，就看见了自己的棕色的腹部，穹顶似的分成一块块的硬片；被子快要盖不住肚子的尖顶，眼看就要完全滑落。他那许多条腿，细得可怜，在他眼前无可奈何地舞动着。他想，我要是再睡一会儿，把这一切晦气事全都忘掉，那该多好。但他发现自己已经无法翻身了。'},
+  {id:89,title:'小猎犬号航海记（节选）',source:'达尔文著 褚律元译',category:'科普自然',ageRange:["youth", "open"],content:'经过五年的航行，我观察了许多自然现象，但最让我惊奇的还是生命的多样性。在加拉帕戈斯群岛，我注意到每个小岛上的雀鸟都有不同的喙——有的厚实有力适合敲碎种子，有的细长尖锐适合啄食昆虫。它们来自同一个祖先，却因为岛屿环境的差异走上了不同的演化道路。当我蹲下来仔细观察这些小鸟的时候，一个念头击中了我——物种不是一成不变的，它们在缓慢地变化着，适应着。这个想法像闪电一样照亮了我的大脑。'},
+  {id:90,title:'这就是纽约（节选）',source:'E·B·怀特著 贾辉丰译',category:'散文',ageRange:["youth", "open"],content:'纽约给每个人以同样的馈赠。它给所有人提供庇护，无论你是谁。这座城市既宽容又严酷，既慷慨又吝啬。它的街道上有诗人、骗子、圣徒和罪犯。这座城市不会问你任何问题，也从不期待你的回答。它接纳你本来的样子。每个在纽约生活的人或多或少都有些神经质——这是被千万种可能性压迫的结果。但正是这种压迫感催生了创造。在纽约，你永远不知道下个转角会遇到什么。这就是它的力量。'},
+  {id:91,title:'记忆传授人（节选）',source:'洛伊丝·劳里著 郑荣珍译《记忆传授人》',category:'经典文学',ageRange:["kid", "youth"],content:'起初，乔纳斯并没有什么特别的感觉。他只感觉到老人轻轻地触摸他的背。他吸了一口气，发现吸入的空气是冷的。他舔了舔嘴唇，舌头碰到了骤然变冷的空气。这很让人吃惊，但他一点儿也不害怕。他感受到一种全新的感觉：细微、冰冷、羽毛般的东西落在他的身上和脸上。他伸出舌头，捕捉落在舌上的小冰点。虽然闭着眼睛，但他可以看到——晶莹剔透的白色物体自空中旋转飘落，落在他周围，聚集在他的手背上，像一层冰冷的软毛。接着，他开始在飘雪中滑行，飞快地向下滑行。他沉浸在巨大的喜悦当中，感受着这一切：速度、清新寒冷的空气、全然的寂静和那种无比自由的感觉。'},
+  {id:92,title:'马克的完美计划（节选）',source:'丹·格迈因哈特著 曹雷雨译《马克的完美计划》',category:'经典文学',ageRange:["kid", "youth"],content:'我想起了杰西。她在家的方向。她现在很可能知道了，她很可能清楚我要去哪儿。她很可能清楚我去那儿是为了什么。不知道为什么，这让我感觉好点了。好像我和波波不再是单枪匹马。我想象着她那双棕色的眼睛，多么稳重深邃。想象她那样静静地望着我，让我心安。我闭上眼睛，努力去感受她。她就在那儿。我兀自微微一笑。她就是那种朋友。我们俩如影随形，从来不会分离。我从背包里取出本子，不假思索地写起来，只在数字数和确认无误时停顿了一下：长夜的彼端，朋友始终在那里，与你在一起。'},
+  {id:93,title:'爱德华的奇妙之旅（节选）',source:'凯特·迪卡米洛著 王昕译《爱德华的奇妙之旅》',category:'经典文学',ageRange:["kid", "youth"],content:'从前，有一只陶瓷小兔子被一个小女孩爱着。从前，有一只陶瓷小兔子爱上了一个小女孩，还在她身边看着她死去。小兔子发誓再也不会犯爱上人的错误。可是，如果没有爱，故事怎么会有幸福的结局？心一次又一次破碎，生命在破碎中继续。一定要穿越那黑暗，愈益深重的黑暗，勇往直前。爱德华抬眼望着满天的星星，他身体的深处什么东西疼了起来。他已经知道一遍又一遍地说着那些你曾丢下的人的名字会是什么滋味。他知道想念某个人是什么滋味。于是他倾听着，他的心扉敞开了，而且越敞越宽广。'},
+  {id:94,title:'小狐狸买手套（节选）',source:'新美南吉著 周龙梅译《小狐狸买手套》',category:'经典文学',ageRange:["kid", "youth"],content:'寒冷的冬天从北方来到了狐狸母子居住的森林。小狐狸在丝棉似的柔软的雪地上兜着圈子，溅起的雪粉像烟雾一样飞散。狐狸妈妈心想，可爱的小宝宝要是手上生冻疮就可怜了，等天黑以后去镇上给小宝宝买双合适的毛线手套吧。它把小狐狸的一只手变成了小孩的手，叮嘱道：你从门缝里把这只小孩手伸进去，说请卖给我一副合适的手套。可小狐狸到了帽子店门口，一紧张把另一只真的狐狸手伸了进去。帽子店老板看到狐狸手吃了一惊，但看到小狐狸递来的铜钱是真钱，还是卖给了它手套。小狐狸回去的路上听到一户人家传来妈妈唱摇篮曲的声音，它忽然想起妈妈，飞快地朝着妈妈等候的方向跑去了。'},
+  {id:95,title:'到你心里躲一躲（节选）',source:'汤汤《到你心里躲一躲》',category:'经典文学',ageRange:["kid", "youth"],content:'那一年，从年初开始，大人们就教木零说四句话：我很冷，我可以在你家的衣柜里躲一躲吗？我很冷，我可以在你家的火炉前待一会儿吗？我还是冷，我可以钻进你的被窝里吗？我还是冷，我可以到你的心里躲一躲吗？木零从春天背到冬天，终于背会了。他遇到了傻路路光芒，光芒有着像城市霓虹灯一样璀璨的眼睛。每次木零说我可以到你的心里躲一躲吗，光芒总是笑着说当然可以，为什么不可以呢？木零从光芒的心里取走了一颗圆溜溜亮晶晶的珠子。很多年以后，木零发现自己的心里也留下了一颗珠子，光芒说，那是一滴眼泪，是你最后一次到我心里时流下的。'},
+  {id:96,title:'字字小宇宙（节选）',source:'林世仁《字字小宇宙》',category:'诗歌',ageRange:["kid", "youth"],content:'太阳在溜滑板吗？他想溜去哪里玩呢？还是有人想把太阳放上拖车，悄悄从太阳系里偷走？嘻嘻，都不是啦。太阳是从海平线上跳出来跟世界打招呼：哈啰，早安！——这是「旦」字。星星是怎么诞生的？是夜晚的天空破了洞？是上帝不小心戳破了黑纱？还是赶夜路的小神仙摔了一跤把珍珠撒得满天都是？嘻，我知道：星星是太阳生的！你看，日加生等于星！——这是「星」字。我把字看成一个个图像，从字的拆解中去寻找趣味，从字的形状去联想，为这些棒得不得了的文字一个字献上一首诗。'},
+  {id:97,title:'不畏风雨',source:'宫泽贤治著 程璧译',category:'诗歌',ageRange:["kid", "youth", "open"],content:'不畏雨 不畏风 也不畏冬雪和酷暑。有一个结实的身体 无欲无求，绝不发怒 总是平静微笑。一日食玄米半升 以及味噌和少许蔬菜，对所有事情 不过分思虑，多听多看 洞察铭记。居住在原野松林荫下 小小的茅草屋。东边有孩子生病 就去看护照顾，西边有母亲劳累 就去帮她扛起稻束，南边有人垂危 就去告诉他莫要怕，北边有争吵或冲突 就去说这很无聊请停止。干旱时流下眼泪，冷夏时坐立不安。大家喊我傻瓜，不被赞美 也不受苦。我想成为 这样的人。'},
+  {id:98,title:'小狐狸阿权（节选）',source:'新美南吉著 周龙梅译《小狐狸阿权》',category:'经典文学',ageRange:["kid", "youth"],content:'阿权是一只淘气的小狐狸。它经常跑到村子里搞恶作剧——把农民晾的绳子咬断，把菜地里的萝卜拔出来扔掉。村里人都说那只狐狸真可恨。有一天，阿权看到兵十在河里捕鱼，它偷偷把兵十网里的鱼全放跑了。过了几天，阿权听说兵十的妈妈去世了，它看到兵十一个人孤零零地站在屋檐下，穿着一件破旧的黑色和服。阿权突然觉得很难过，它想，那天我放跑了他的鱼，他一定是想用那些鱼给妈妈熬汤喝的。阿权决定补偿兵十。它偷偷捡来栗子和蘑菇，放在兵十家的门口。兵十不知道是谁送的，以为是神明在帮忙。每天早晨看到门口的栗子，兵十就对着天空合掌感谢。阿权躲在树丛后面看着，心里又高兴又酸楚。'},
+  {id:99,title:'水妖喀喀莎（节选）',source:'汤汤《水妖喀喀莎》',category:'经典文学',ageRange:["kid", "youth"],content:'喀喀莎是一个水妖，她的名字听起来就像冒泡的声音。水妖们住在蓝色的大水里，她们会唱很好听的歌，会跳很好看的舞。可是喀喀莎有一个秘密——她一直惦记着岸上的世界。其他水妖说，不要去岸上，那里的人会把你抓走的。但喀喀莎还是忍不住浮出水面，她看到了蓝天、白云、飞鸟，还有一个坐在岸边哭泣的小女孩。小女孩叫土豆，她的奶奶刚刚去世了。喀喀莎慢慢靠近她，唱起了水妖的歌。那歌声像蓝色的水波一样温柔，土豆听着听着就不哭了。后来她们成了朋友，喀喀莎告诉土豆，水妖的眼泪会变成珍珠，而世界上最珍贵的珍珠，是笑着流出来的眼泪。'}
+];
+console.log('TEXTS inline:', window.TEXTS.length);
+</script>
+<script src="js/ai-engine.js"></script>
+<script src="js/level1.js"></script>
+<script src="js/level2.js"></script>
+<script src="js/level3.js"></script>
+<script src="js/export.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
