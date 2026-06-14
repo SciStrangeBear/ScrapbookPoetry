@@ -115,15 +115,15 @@ class App {
     this.level3.init(this);
     this.exportModule.init(this);
 
-    // Debug bar
-    var dbg = document.createElement('div');
-    dbg.id = 'debug-bar';
-    dbg.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#333;color:#fff;font-size:12px;padding:8px;z-index:9999;font-family:monospace;';
-    dbg.textContent = 'TEXTS=' + (typeof TEXTS !== 'undefined' ? TEXTS.length + '篇' : 'NOT LOADED') +
-      ' | AIEngine=' + (typeof AIEngine !== 'undefined' ? 'OK' : 'MISSING') +
-      ' | Level1=' + (typeof Level1 !== 'undefined' ? 'OK' : 'MISSING') +
-      ' | App=OK';
-    document.body.appendChild(dbg);
+//     // Debug bar (disabled)
+//     var dbg = document.createElement('div');
+//     dbg.id = 'debug-bar';
+//     dbg.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#333;color:#fff;font-size:12px;padding:8px;z-index:9999;font-family:monospace;';
+//     dbg.textContent = 'TEXTS=' + (typeof TEXTS !== 'undefined' ? TEXTS.length + '篇' : 'NOT LOADED') +
+//       ' | AIEngine=' + (typeof AIEngine !== 'undefined' ? 'OK' : 'MISSING') +
+//       ' | Level1=' + (typeof Level1 !== 'undefined' ? 'OK' : 'MISSING') +
+//       ' | App=OK';
+//     document.body.appendChild(dbg);
 
     console.log('CollagePoem App initialized');
   }
