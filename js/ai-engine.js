@@ -298,8 +298,7 @@ const AIEngine = {
     return comment;
   },
 
-  // === DeepSeek API ===
-  DEEPSEEK_API_KEY: 'sk-2b35cdfd66fc479581eb3bdd2231b80d',
+  // === DeepSeek API（通过 Cloudflare Pages Functions 代理，Key 不暴露给客户端）===
 
   /** 使用 DeepSeek API 进行 AI 点评 */
   async reviewWithAI(words, sourceTexts) {
@@ -339,12 +338,10 @@ ${sourceContext}
 
 ${poemText}`;
 
-    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+    // 通过同域代理调用 DeepSeek，API Key 保存在服务端
+    const response = await fetch('/api/review', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.DEEPSEEK_API_KEY}`
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'deepseek-chat',
         messages: [{ role: 'user', content: prompt }],
@@ -354,8 +351,8 @@ ${poemText}`;
     });
 
     if (!response.ok) {
-      const errText = await response.text().catch(() => '');
-      throw new Error(`API 请求失败（${response.status}）：${errText || response.statusText}`);
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(`API 请求失败（${response.status}）：${errData.error || response.statusText}`);
     }
 
     const data = await response.json();
