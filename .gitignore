@@ -25,3 +25,10 @@ AI点评.md
 DESIGN.md
 design-doc.md
 code.html
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
