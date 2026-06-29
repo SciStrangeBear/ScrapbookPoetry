@@ -214,7 +214,6 @@ const ExportModule = {
     let minX = Infinity, minY = Infinity, maxX = 0, maxY = 0;
     const padding = 64;
     const usableW = EXPORT_W - padding * 2;
-    const usableH = EXPORT_H - padding * 2;
 
     for (const w of poem.words) {
       if (w.x < minX) minX = w.x;
@@ -228,11 +227,15 @@ const ExportModule = {
     const contentH = maxY - minY + 100;
     const scale = Math.min(
       contentW > usableW ? usableW / contentW : 1,
-      contentH > usableH ? usableH / contentH : 1,
       1
     );
+    const scaledContentH = contentH * scale;
+    const finalH = Math.max(EXPORT_H, Math.ceil(scaledContentH + padding * 2));
+    const verticalInset = scaledContentH < EXPORT_H - padding * 2
+      ? Math.max(padding, (finalH - scaledContentH) / 2)
+      : padding;
     const offsetX = padding + (usableW - contentW * scale) / 2 - minX * scale;
-    const offsetY = padding + (usableH - contentH * scale) / 2 - minY * scale;
+    const offsetY = verticalInset - minY * scale;
 
     for (const w of poem.words) {
       const wordEl = document.createElement('div');
@@ -259,7 +262,6 @@ const ExportModule = {
       container.appendChild(wordEl);
     }
 
-    const finalH = Math.max(EXPORT_H, (maxY + 100) * scale + padding * 2);
     container.style.minHeight = finalH + 'px';
   },
 
@@ -291,10 +293,9 @@ const ExportModule = {
     // Arrange words in poster layout
     this._applyPosterLayout(exportEl, poem, style);
 
-    // Footer with author
+    // Footer with date
     const now = new Date();
     const dateStr = `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日`;
-    const authorName = (this.app && this.app.state.settings.author) || '匿名';
     const footer = document.createElement('div');
     footer.style.cssText = `
       position: absolute; bottom: 30px; left: 80px; right: 80px;
@@ -303,7 +304,7 @@ const ExportModule = {
       font-family: 'ZCOOL XiaoWei','Noto Serif SC','STSong',serif;
       opacity: 0.6;
     `;
-    footer.textContent = `拼贴诗 · ${authorName} · ${dateStr}`;
+    footer.textContent = `拼贴诗 · ${dateStr}`;
     exportEl.appendChild(footer);
 
     return exportEl;

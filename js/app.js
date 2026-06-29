@@ -14,9 +14,7 @@ const AppState = {
   currentPoemIdx: 0,
   settings: {
     style: 'newspaper',     // 'newspaper' | 'journal' | 'ink' | 'modern'
-    author: '',             // author name for signing
   },
-  aiScore: 0,
 };
 
 class App {
@@ -120,7 +118,6 @@ class App {
 //     dbg.id = 'debug-bar';
 //     dbg.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#333;color:#fff;font-size:12px;padding:8px;z-index:9999;font-family:monospace;';
 //     dbg.textContent = 'TEXTS=' + (typeof TEXTS !== 'undefined' ? TEXTS.length + '篇' : 'NOT LOADED') +
-//       ' | AIEngine=' + (typeof AIEngine !== 'undefined' ? 'OK' : 'MISSING') +
 //       ' | Level1=' + (typeof Level1 !== 'undefined' ? 'OK' : 'MISSING') +
 //       ' | App=OK';
 //     document.body.appendChild(dbg);
@@ -217,7 +214,6 @@ class App {
     this.state.collectedWords = [];
     this.state.poems = [];
     this.state.currentPoemIdx = 0;
-    this.state.aiScore = 0;
     this.state.level2Visited = false;
     // Reset level2 cuts
     this.level2.cuts.clear();
@@ -246,7 +242,6 @@ class App {
     const works = this.loadWorks();
     const work = {
       id: Date.now(),
-      author: this.state.settings.author || '匿名',
       date: new Date().toISOString(),
       style: this.state.settings.style,
       poemIndex: this.state.currentPoemIdx,
@@ -255,7 +250,7 @@ class App {
     };
     works.unshift(work);
     localStorage.setItem('collage_poetry_works', JSON.stringify(works));
-    this.toast('✅ 作品已保存');
+    this.toast('✅ 已存到作品集');
   }
 
   deleteWork(id) {
@@ -281,7 +276,7 @@ class App {
     const body = document.getElementById('gallery-body');
 
     if (works.length === 0) {
-      body.innerHTML = '<div class="gallery-empty">还没有保存的作品<br>在拼贴页面点击「📂 保存」按钮来保存你的诗</div>';
+      body.innerHTML = '<div class="gallery-empty">还没有保存的作品<br>在拼贴页面点击「📂 存到作品集」按钮来保存你的诗</div>';
       return;
     }
 
@@ -295,7 +290,7 @@ class App {
         <div class="gallery-item" data-id="${w.id}">
           <div class="gallery-item-icon">${previewChar}</div>
           <div class="gallery-item-info">
-            <div class="gallery-item-title">${w.author} · ${w.wordCount} 个词</div>
+            <div class="gallery-item-title">${w.wordCount} 个词</div>
             <div class="gallery-item-meta">${dateStr} · ${styleNames[w.style] || w.style}</div>
           </div>
           <div class="gallery-item-actions">
@@ -333,7 +328,6 @@ class App {
     this.state.poems = [{ id: Date.now(), words: JSON.parse(JSON.stringify(work.words)) }];
     this.state.currentPoemIdx = 0;
     this.state.settings.style = work.style;
-    this.state.settings.author = work.author || '';
 
     this.closeGallery();
     this.goToLevel(3);

@@ -185,6 +185,7 @@ const Level1 = {
     const count = this.app.state.selectedTexts.length;
     this.selectionCount.textContent = `已选 ${count} 篇`;
     this.btnToLevel2.disabled = count === 0;
+    this.btnToLevel2.textContent = '进入剪裁 ▶';
   },
 
   /** 添加自定义文本 */

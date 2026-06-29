@@ -5,10 +5,12 @@
 const Level2 = {
   init(app) {
     this.app = app;
+    this.minCuts = 3;
     this.cuts = new Map(); // textId -> [{start, end, text}]
     this.sourceTextsEl = document.getElementById('source-texts');
     this.collectionBody = document.getElementById('collection-body');
     this.wordCount = document.getElementById('word-count');
+    this.collectionHint = document.getElementById('collection-hint');
     this.btnClear = document.getElementById('btn-clear-words');
     this.btnToLevel3 = document.getElementById('btn-to-level3');
     this.cutFloatBtn = document.getElementById('cut-float-btn');
@@ -343,8 +345,19 @@ const Level2 = {
 
   updateUI() {
     const count = this.app.state.collectedWords.length;
+    const remaining = Math.max(0, this.minCuts - count);
     this.wordCount.textContent = count + ' 个词';
-    this.btnToLevel3.disabled = count < 3;
+    this.btnToLevel3.disabled = count < this.minCuts;
+
+    if (remaining > 0) {
+      this.collectionHint.textContent = `至少还需要剪下 ${remaining} 个词或短语，才能开始拼贴。`;
+      this.collectionHint.classList.remove('ready');
+      this.collectionHint.classList.remove('hidden');
+      this.btnToLevel3.textContent = `还差 ${remaining} 个`;
+    } else {
+      this.collectionHint.classList.add('hidden');
+      this.btnToLevel3.textContent = '开始拼贴 ▶';
+    }
   },
 
   showToast(msg) {

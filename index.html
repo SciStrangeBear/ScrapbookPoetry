@@ -96,10 +96,10 @@
       </div>
     </div>
     <div class="header-right">
-      <button class="btn-icon" id="btn-gallery" title="作品集">📂</button>
-      <button class="btn-help" id="btn-help" title="关于">?</button>
-      <button class="btn-icon" id="btn-settings" title="设置">⚙</button>
-      <button class="btn-icon" id="btn-restart" title="重新开始">↺</button>
+      <button class="btn-icon btn-header-tip" id="btn-gallery" aria-label="打开作品集" data-tooltip="打开作品集">📂</button>
+      <button class="btn-help btn-header-tip" id="btn-help" aria-label="查看帮助" data-tooltip="查看帮助">?</button>
+      <button class="btn-icon btn-header-tip" id="btn-settings" aria-label="打开设置" data-tooltip="打开设置">⚙</button>
+      <button class="btn-icon btn-header-tip" id="btn-restart" aria-label="重新开始创作" data-tooltip="重新开始创作">↺</button>
     </div>
   </header>
 
@@ -160,6 +160,7 @@
           <h3>📋 收集框</h3>
           <span id="word-count" class="word-count">0 个词</span>
         </div>
+        <div id="collection-hint" class="collection-hint">至少剪下 3 个词或短语，才能开始拼贴。</div>
         <div class="collection-body" id="collection-body">
           <!-- JS renders collected words here -->
         </div>
@@ -201,14 +202,9 @@
       <div class="canvas-area">
         <div class="canvas-toolbar">
           <a class="back-link" id="back-to-level2" onclick="window.app.goToLevel(2)">← 返回剪裁</a>
-          <div class="toolbar-author">
-            <span class="author-label">署名</span>
-            <input type="text" class="author-input" id="author-input" placeholder="匿名" maxlength="20">
-          </div>
           <div class="canvas-actions">
-            <button class="btn btn-sm btn-outline" id="btn-save-work">📂 保存</button>
+            <button class="btn btn-sm btn-outline" id="btn-save-work">📂 存到作品集</button>
             <button class="btn btn-sm btn-outline" id="btn-add-poem">+ 新增一首</button>
-            <button class="btn btn-sm btn-outline" id="btn-check-ai">AI 点评</button>
             <button class="btn btn-sm btn-primary" id="btn-download">⬇ 下载</button>
           </div>
         </div>
@@ -234,24 +230,6 @@
             <button class="mode-btn" data-mode="poster">🎨 海报排版</button>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== AI 点评弹窗 ===== -->
-  <div id="ai-overlay" class="overlay hidden">
-    <div class="ai-modal">
-      <div class="ai-modal-header">
-        <h2>🤖 AI 点评</h2>
-        <button class="btn-icon" id="ai-close">✕</button>
-      </div>
-      <div class="ai-modal-body">
-        <div class="ai-result" id="ai-result">
-          <!-- JS renders review here -->
-        </div>
-      </div>
-      <div class="ai-modal-footer">
-        <button class="btn btn-text" id="ai-close-btn">关闭</button>
       </div>
     </div>
   </div>
@@ -346,7 +324,6 @@
             <li>同一行的词尽量拖到相近的高度，<strong>海报排版</strong>会自动识别分行</li>
             <li>善用<strong>虚词弹药库</strong>中的「的、了、在、和」等词让诗句更流畅</li>
             <li>点击<strong>+ 新增一首</strong>可以创建多首诗来管理不同的构思</li>
-            <li><strong>AI 点评</strong>可以分析你的诗在主题和情绪上的特点</li>
             <li>在选材页展开「没有喜欢的素材？自己来贴」可以粘贴你自己的文字</li>
           </ul>
         </div>
@@ -456,7 +433,6 @@ window.TEXTS = [
 ];
 console.log('TEXTS inline:', window.TEXTS.length);
 </script>
-<script src="js/ai-engine.js"></script>
 <script src="js/level1.js"></script>
 <script src="js/level2.js"></script>
 <script src="js/level3.js"></script>

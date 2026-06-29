@@ -3,6 +3,11 @@
  * 词库拖拽、自由画布、多诗管理
  */
 const Level3 = {
+  BASE_CANVAS_HEIGHT_DESKTOP: 720,
+  BASE_CANVAS_HEIGHT_MOBILE: 520,
+  CANVAS_EXPAND_PADDING: 140,
+  CANVAS_EXPAND_STEP: 260,
+
   // Common Chinese function words for the 虚词弹药库
   FUNCTION_WORDS: [
     '的', '了', '是', '在', '和', '就', '把', '被',
@@ -29,7 +34,6 @@ const Level3 = {
     this.canvasPlaceholder = document.getElementById('canvas-placeholder');
     this.poemTabs = document.getElementById('poem-tabs');
     this.btnAddPoem = document.getElementById('btn-add-poem');
-    this.btnCheckAI = document.getElementById('btn-check-ai');
     this.btnDownload = document.getElementById('btn-download');
     this.layoutModeSelector = document.getElementById('layout-mode-selector');
 
@@ -40,24 +44,16 @@ const Level3 = {
     this.btnSaveWork = document.getElementById('btn-save-work');
     this.btnSaveWork.addEventListener('click', () => this.app.saveWork());
 
-    this.authorInput = document.getElementById('author-input');
-    this.authorInput.addEventListener('change', () => {
-      this.app.state.settings.author = this.authorInput.value.trim();
-    });
-
     this.btnAddPoem.addEventListener('click', () => this.addPoem());
-    this.btnCheckAI.addEventListener('click', () => this.showAI());
     this.btnDownload.addEventListener('click', () => this.app.exportModule.export());
+
+    window.addEventListener('resize', () => this.updateCanvasSize());
 
     // Global mouse/touch handlers for dragging
     document.addEventListener('mousemove', (e) => this.onDragMove(e));
     document.addEventListener('mouseup', (e) => this.onDragEnd(e));
     document.addEventListener('touchmove', (e) => this.onTouchMove(e), { passive: false });
     document.addEventListener('touchend', (e) => this.onTouchEnd(e));
-
-    // Close AI overlay
-    document.getElementById('ai-close').addEventListener('click', () => this.closeAI());
-    document.getElementById('ai-close-btn').addEventListener('click', () => this.closeAI());
 
     // Style selector
     document.querySelectorAll('.style-btn').forEach(el => {
@@ -93,8 +89,6 @@ const Level3 = {
     this.renderFuncWords();
     this.renderPoemTabs();
     this.renderCanvas();
-    // Sync author input from settings
-    this.authorInput.value = this.app.state.settings.author || '';
     // Sync style selector from settings
     document.querySelectorAll('.style-btn').forEach(b => {
       b.classList.toggle('active', b.dataset.style === this.app.state.settings.style);
@@ -176,6 +170,7 @@ const Level3 = {
   renderCanvas() {
     const poem = this.getCurrentPoem();
     this.canvas.innerHTML = '';
+    this.updateCanvasSize();
 
     if (!poem || poem.words.length === 0) {
       this.canvasPlaceholder.classList.remove('hidden');
@@ -188,6 +183,8 @@ const Level3 = {
       const el = this.createCanvasWordEl(w);
       this.canvas.appendChild(el);
     }
+
+    this.updateCanvasSize();
   },
 
   updateCanvasPreview() {
@@ -325,6 +322,7 @@ const Level3 = {
       const newY = e.clientY - rect.top - this.dragData.offsetY;
       this.dragData.wordData.x = Math.max(0, newX);
       this.dragData.wordData.y = Math.max(0, newY);
+      this.ensureCanvasSpaceForWord(this.dragData.wordData);
       this.renderCanvasWordPositions();
     }
   },
@@ -370,6 +368,7 @@ const Level3 = {
       const newY = touch.clientY - rect.top - this.dragData.offsetY;
       this.dragData.wordData.x = Math.max(0, newX);
       this.dragData.wordData.y = Math.max(0, newY);
+      this.ensureCanvasSpaceForWord(this.dragData.wordData);
       this.renderCanvasWordPositions();
     }
   },
@@ -412,6 +411,7 @@ const Level3 = {
       isFunc: wordData.isFunc || false,
     };
     poem.words.push(newWord);
+    this.ensureCanvasSpaceForWord(newWord);
     this.renderCanvas();
     this.saveCanvasState();
   },
@@ -427,6 +427,7 @@ const Level3 = {
   renderCanvasWordPositions() {
     const poem = this.getCurrentPoem();
     if (!poem) return;
+    this.updateCanvasSize();
     for (const w of poem.words) {
       const el = this.canvas.querySelector(`[data-word-id="${w.id}"]`);
       if (el) {
@@ -470,83 +471,61 @@ const Level3 = {
   saveCanvasState() {
     // State is already stored in app.state and updated by reference
     // Just re-render the tabs to update word counts
+    this.updateCanvasSize();
     this.renderPoemTabs();
   },
 
-  // ===== AI Review =====
-  showAI() {
-    const poem = this.getCurrentPoem();
-    if (!poem || poem.words.length === 0) {
-      this.app.toast('画布上还没有词语，先拖几个词再生成点评吧');
-      return;
+  getCanvasBaseHeight() {
+    const containerHeight = this.canvas?.parentElement?.clientHeight || 0;
+    const viewportBase = window.innerWidth <= 768
+      ? this.BASE_CANVAS_HEIGHT_MOBILE
+      : this.BASE_CANVAS_HEIGHT_DESKTOP;
+    return Math.max(viewportBase, containerHeight);
+  },
+
+  estimateWordBox(word) {
+    const fontSize = word.fontSize || 24;
+    const width = Math.max(56, Math.round(word.text.length * fontSize * 0.72 + 28));
+    const height = Math.max(32, Math.round(fontSize * 1.55 + 14));
+    return { width, height };
+  },
+
+  getCanvasContentBottom(poem = this.getCurrentPoem()) {
+    if (!poem || poem.words.length === 0) return 0;
+
+    let maxBottom = 0;
+    for (const word of poem.words) {
+      const { height } = this.estimateWordBox(word);
+      maxBottom = Math.max(maxBottom, word.y + height);
     }
-
-    // Local stats (fast, rule-based)
-    const result = AIEngine.reviewPoem(poem.words);
-
-    let html = '';
-
-    // Stats row
-    html += `<div class="review-stats">
-      <span><strong>${result.stats.totalWords}</strong> 个词</span>
-      <span><strong>${result.stats.totalChars}</strong> 个字</span>
-      <span><strong>${result.stats.verbCount}</strong> 个动词 · <strong>${result.stats.adjCount}</strong> 个形容词 · <strong>${result.stats.colorCount}</strong> 个色彩词</span>
-      <span><strong>${result.stats.funcWordCount}</strong> 个虚词</span>
-    </div>`;
-
-    // Theme & mood badges
-    html += `<div class="review-badges">
-      <span class="review-badge theme">● ${result.theme}</span>
-      <span class="review-badge mood">◑ ${result.mood}</span>
-    </div>`;
-
-    // Loading indicator (visible while API call is in flight)
-    html += '<div class="review-loading" id="ai-loading">✂ AI 正在审阅你的诗……</div>';
-    // AI response container (hidden until API responds)
-    html += '<div id="ai-response" style="display:none;" class="ai-response-text"></div>';
-
-    document.getElementById('ai-result').innerHTML = html;
-
-    // Show overlay
-    document.getElementById('ai-overlay').classList.remove('hidden');
-    document.getElementById('ai-overlay').classList.add('active');
-
-    // Call DeepSeek API asynchronously
-    const sourceTexts = this.app.state.selectedTexts || [];
-    AIEngine.reviewWithAI(poem.words, sourceTexts)
-      .then(text => {
-        const loading = document.getElementById('ai-loading');
-        const content = document.getElementById('ai-response');
-        if (loading) loading.style.display = 'none';
-        if (content) {
-          content.style.display = 'block';
-          content.innerHTML = this._renderAIResponse(text);
-        }
-      })
-      .catch(err => {
-        const loading = document.getElementById('ai-loading');
-        if (loading) {
-          loading.innerHTML = '❌ ' + err.message + '<br><br>可稍后重试，或检查网络连接与 API Key 是否有效。';
-        }
-      });
+    return maxBottom;
   },
 
-  /** 将 AI 返回的 Markdown 文本渲染为 HTML */
-  _renderAIResponse(text) {
-    let h = text
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/### (.+)/g, '<h3>$1</h3>')
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.+?)\*/g, '<em>$1</em>')
-      .replace(/\n\n/g, '</p><p>')
-      .replace(/\n/g, '<br>');
-    return '<p>' + h + '</p>';
+  updateCanvasSize(explicitHeight) {
+    if (!this.canvas) return;
+
+    const baseHeight = this.getCanvasBaseHeight();
+    const contentBottom = this.getCanvasContentBottom();
+    const nextHeight = Math.max(
+      explicitHeight || 0,
+      baseHeight,
+      contentBottom + this.CANVAS_EXPAND_PADDING
+    );
+
+    this.canvas.style.height = `${nextHeight}px`;
+    this.canvas.style.minHeight = `${nextHeight}px`;
   },
 
-  closeAI() {
-    document.getElementById('ai-overlay').classList.remove('active');
-    document.getElementById('ai-overlay').classList.add('hidden');
+  ensureCanvasSpaceForWord(word) {
+    if (!this.canvas || !word) return;
+
+    const { height } = this.estimateWordBox(word);
+    const requiredHeight = word.y + height + this.CANVAS_EXPAND_PADDING;
+    const currentHeight = this.canvas.offsetHeight || this.getCanvasBaseHeight();
+
+    if (requiredHeight > currentHeight - 32) {
+      this.updateCanvasSize(requiredHeight + this.CANVAS_EXPAND_STEP);
+    }
   },
+
 };
